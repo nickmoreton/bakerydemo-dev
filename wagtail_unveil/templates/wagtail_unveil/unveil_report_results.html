@@ -1,0 +1,39 @@
+{% extends 'wagtailadmin/reports/base_report_results.html' %}
+{% load wagtailadmin_tags static %}
+
+{% block results %}
+    <table class="listing">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Model Name</th>
+                <th>URL Type</th>
+                <th>&nbsp;</th>
+                <th>&nbsp;</th>
+                <th>Admin / Frontend URL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in object_list %}
+                <tr data-url="{{ entry.url }}" data-id="{{ entry.id }}" data-check>
+                    <td>{{ entry.id }}</td>
+                    <td>{{ entry.model_name }}</td>
+                    <td>{{ entry.url_type }}</td>
+                    <td data-result>
+                        <svg class="icon icon-radio-empty w-w-4 w-h-4" aria-hidden="true"><use href="#icon-radio-empty"></use></svg>
+                        <svg class="icon icon-circle-check w-w-4 w-h-4" aria-hidden="true"><use href="#icon-circle-check"></use></svg>
+                        <svg class="icon icon-error w-w-4 w-h-4" aria-hidden="true"><use href="#icon-error"></use></svg>
+                    </td>
+                    <td>
+                        <a href="{{ entry.url }}" target="_blank" class="button button-small bicolor button--icon"><span class="icon-wrapper"><svg class="icon icon-link-external icon" aria-hidden="true"><use href="#icon-link-external"></use></svg></span>View Page</a>
+                    </td>
+                    <td>{{ entry.url }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block no_results_message %}
+    <p>No URLs found.</p>
+{% endblock %}
