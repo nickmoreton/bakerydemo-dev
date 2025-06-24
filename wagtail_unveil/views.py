@@ -4,7 +4,7 @@ from io import StringIO
 from wagtail.admin.widgets.button import HeaderButton
 from django.conf import settings
 
-# from .helpers.page_helpers import get_page_urls
+from .helpers.page_helpers import get_page_urls
 # from .helpers.snippet_helpers import get_snippet_urls, get_modelviewset_urls
 # from .helpers.modeladmin_helpers import get_modeladmin_urls
 # from .helpers.settings_helpers import get_settings_admin_urls
