@@ -6,6 +6,7 @@ from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
 from .helpers.page_helpers import get_page_urls
+from .helpers.snippet_helpers import get_snippet_urls
 
 
 class UnveilPageReportView(ReportView):
@@ -156,23 +157,27 @@ class UnveilSnippetReportView(ReportView):
         return self.get_queryset()
 
     def get_queryset(self):
+        # Create a StringIO object to capture any output/errors
+        output = StringIO()
+        
+        # Create a named tuple to represent URL entries
+        UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
+        
         # Collect URLs from different helpers
         all_urls = []
         
-        # TODO: Implement snippet URL collection
-        # For now, return empty list - this will be implemented later
-        # 
-        # When implementing, uncomment and use these:
-        # from collections import namedtuple
-        # UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
-        # output = StringIO()
-        # counter = 1
-        # max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
-        # base_url = "http://localhost:8000"  # Default base URL
+        # We'll use a counter for IDs
+        counter = 1
         
-        # snippet_urls = get_snippet_urls(output, base_url, max_instances)
-        # for model_name, url_type, url in snippet_urls:
-        #     all_urls.append(UrlEntry(counter, model_name, url_type, url))
-        #     counter += 1
+        # Get URLs from different sources using helper functions
+        # Get max_instances from settings with a default of 1
+        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
+        base_url = "http://localhost:8000"  # Default base URL
+        
+        # Collect snippet URLs
+        snippet_urls = get_snippet_urls(output, base_url, max_instances)
+        for model_name, url_type, url in snippet_urls:
+            all_urls.append(UrlEntry(counter, model_name, url_type, url))
+            counter += 1
             
         return all_urls
