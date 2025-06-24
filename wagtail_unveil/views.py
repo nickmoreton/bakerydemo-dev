@@ -1,23 +1,20 @@
-from wagtail.admin.views.reports import ReportView
 from collections import namedtuple
 from io import StringIO
-from wagtail.admin.widgets.button import HeaderButton
+
 from django.conf import settings
+from wagtail.admin.views.reports import ReportView
+from wagtail.admin.widgets.button import HeaderButton
 
 from .helpers.page_helpers import get_page_urls
-# from .helpers.snippet_helpers import get_snippet_urls, get_modelviewset_urls
-# from .helpers.modeladmin_helpers import get_modeladmin_urls
-# from .helpers.settings_helpers import get_settings_admin_urls
-# from .helpers.media_helpers import get_image_admin_urls, get_document_admin_urls
 
 
-class UnveilReportView(ReportView):
-    index_url_name = "unveil_report"
-    index_results_url_name = "unveil_report_results"
+class UnveilPageReportView(ReportView):
+    index_url_name = "unveil_page_report"
+    index_results_url_name = "unveil_page_report_results"
     header_icon = "tasks"
-    template_name = "wagtail_unveil/unveil_report.html"
-    results_template_name = "wagtail_unveil/unveil_report_results.html"
-    page_title = "Unveil URL's"
+    template_name = "wagtail_unveil/unveil_page_report.html"
+    results_template_name = "wagtail_unveil/unveil_page_report_results.html"
+    page_title = "Unveil Page URL's"
     list_export = [
         "id",
         "model_name",
@@ -110,6 +107,71 @@ class UnveilReportView(ReportView):
         # # Get document URLs
         # document_urls = get_document_admin_urls(output, base_url, max_instances)
         # for model_name, url_type, url in document_urls:
+        #     all_urls.append(UrlEntry(counter, model_name, url_type, url))
+        #     counter += 1
+            
+        return all_urls
+
+
+class UnveilSnippetReportView(ReportView):
+    index_url_name = "unveil_snippet_report"
+    index_results_url_name = "unveil_snippet_report_results"
+    header_icon = "tasks"
+    template_name = "wagtail_unveil/unveil_snippet_report.html"
+    results_template_name = "wagtail_unveil/unveil_snippet_report_results.html"
+    page_title = "Unveil Snippet URL's"
+    list_export = [
+        "id",
+        "model_name",
+        "url_type",
+        "url",
+    ]
+    export_headings = {
+        "id": "ID",
+        "model_name": "Model Name",
+        "url_type": "URL Type",
+        "url": "URL",
+    }
+    paginate_by = None
+    
+    def get_header_buttons(self):
+         return [
+            HeaderButton(
+                label="Run Checks",
+                icon_name="link",
+                attrs={
+                    "data-action": "check-urls",
+                },
+            ),
+        ]
+
+    def get_filterset_kwargs(self):
+        # Get the base queryset and pass it to the filterset
+        kwargs = super().get_filterset_kwargs()
+        kwargs["queryset"] = self.get_queryset()
+        return kwargs
+    
+    def get_base_queryset(self):
+        # Return the base queryset for the report
+        return self.get_queryset()
+
+    def get_queryset(self):
+        # Collect URLs from different helpers
+        all_urls = []
+        
+        # TODO: Implement snippet URL collection
+        # For now, return empty list - this will be implemented later
+        # 
+        # When implementing, uncomment and use these:
+        # from collections import namedtuple
+        # UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
+        # output = StringIO()
+        # counter = 1
+        # max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
+        # base_url = "http://localhost:8000"  # Default base URL
+        
+        # snippet_urls = get_snippet_urls(output, base_url, max_instances)
+        # for model_name, url_type, url in snippet_urls:
         #     all_urls.append(UrlEntry(counter, model_name, url_type, url))
         #     counter += 1
             

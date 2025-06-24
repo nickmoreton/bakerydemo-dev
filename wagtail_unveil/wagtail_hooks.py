@@ -1,39 +1,65 @@
 from django.urls import path, reverse
 
-from wagtail.admin.menu import AdminOnlyMenuItem
 from wagtail import hooks
+from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView
 
 
 @hooks.register("register_reports_menu_item")
-def register_unveil_report_menu_item():
+def register_unveil_page_report_menu_item():
     """
-    Register the Unveil report menu item in the Wagtail admin.
+    Register the Unveil Page report menu item in the Wagtail admin.
     """
     return AdminOnlyMenuItem(
-        "Unveil URL's",
-        reverse("unveil_report"),
-        name="unveil_report",
+        "Unveil Page URL's",
+        reverse("unveil_page_report"),
+        name="unveil_page_report",
         order=10000,
         icon_name="tasks",
+    )
+
+
+@hooks.register("register_reports_menu_item")
+def register_unveil_snippet_report_menu_item():
+    """
+    Register the Unveil Snippet report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Snippet URL's",
+        reverse("unveil_snippet_report"),
+        name="unveil_snippet_report",
+        order=10001,
+        icon_name="snippet",
     )
 
 
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
-    Register the Unveil report view URL in the Wagtail admin.
+    Register the Unveil report view URLs in the Wagtail admin.
     """
     return [
+        # Page Report URLs
         path(
-            "unveil/report/",
-            UnveilReportView.as_view(),
-            name="unveil_report",
+            "unveil/page-report/",
+            UnveilPageReportView.as_view(),
+            name="unveil_page_report",
         ),
         path(
-            "unveil/report/results/",
-            UnveilReportView.as_view(results_only=True),
-            name="unveil_report_results",
+            "unveil/page-report/results/",
+            UnveilPageReportView.as_view(results_only=True),
+            name="unveil_page_report_results",
+        ),
+        # Snippet Report URLs
+        path(
+            "unveil/snippet-report/",
+            UnveilSnippetReportView.as_view(),
+            name="unveil_snippet_report",
+        ),
+        path(
+            "unveil/snippet-report/results/",
+            UnveilSnippetReportView.as_view(results_only=True),
+            name="unveil_snippet_report_results",
         ),
     ]
