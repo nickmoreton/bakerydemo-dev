@@ -1,37 +1,18 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.contrib.search_promotions.models import SearchPromotion
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
+class SearchPromotionsAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Search Promotions.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_search_promotions_url_pattern_name(self, action):
         """
@@ -52,19 +33,14 @@ class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "search_promotions_index"
-            url_pattern = self._get_search_promotions_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating search promotions index URL: {e}")
-        
-        return None
-    
+        cache_key = "search_promotions_index"
+        url_pattern = self._get_search_promotions_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
+
     def get_search_promotion_add_url(self):
         """
         Get the add search promotion URL
@@ -72,19 +48,14 @@ class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "search_promotion_add"
-            url_pattern = self._get_search_promotions_url_pattern_name('add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating search promotion add URL: {e}")
-        
-        return None
-    
+        cache_key = "search_promotion_add"
+        url_pattern = self._get_search_promotions_url_pattern_name('add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
+
     def get_search_promotion_edit_url(self, promotion_id):
         """
         Get the edit URL for a specific search promotion
@@ -98,20 +69,15 @@ class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
         if not promotion_id:
             return None
         
-        try:
-            cache_key = f"search_promotion_edit_{promotion_id}"
-            url_pattern = self._get_search_promotions_url_pattern_name('edit')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[promotion_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating search promotion edit URL for promotion {promotion_id}: {e}")
-        
-        return None
-    
+        cache_key = f"search_promotion_edit_{promotion_id}"
+        url_pattern = self._get_search_promotions_url_pattern_name('edit')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[promotion_id]
+        )
+
     def get_search_promotion_delete_url(self, promotion_id):
         """
         Get the delete URL for a specific search promotion
@@ -125,20 +91,15 @@ class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
         if not promotion_id:
             return None
         
-        try:
-            cache_key = f"search_promotion_delete_{promotion_id}"
-            url_pattern = self._get_search_promotions_url_pattern_name('delete')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[promotion_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating search promotion delete URL for promotion {promotion_id}: {e}")
-        
-        return None
-    
+        cache_key = f"search_promotion_delete_{promotion_id}"
+        url_pattern = self._get_search_promotions_url_pattern_name('delete')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[promotion_id]
+        )
+
     def get_all_search_promotion_urls(self, promotion_id):
         """
         Get all available admin URLs for a search promotion
@@ -164,12 +125,6 @@ class SearchPromotionsAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_search_promotions():
