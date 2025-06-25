@@ -1,38 +1,19 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.contrib.forms.models import FormSubmission
 from wagtail.models import Page
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class FormsAdminURLFinder(ModelAdminURLFinder):
+class FormsAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Forms and Form Submissions.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_forms_url_pattern_name(self, action):
         """
@@ -53,19 +34,14 @@ class FormsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "forms_index"
-            url_pattern = self._get_forms_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating forms index URL: {e}")
-        
-        return None
-    
+        cache_key = "forms_index"
+        url_pattern = self._get_forms_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
+
     def get_form_submissions_list_url(self, page_id):
         """
         Get the submissions list URL for a specific form page
@@ -79,20 +55,15 @@ class FormsAdminURLFinder(ModelAdminURLFinder):
         if not page_id:
             return None
         
-        try:
-            cache_key = f"list_submissions_{page_id}"
-            url_pattern = self._get_forms_url_pattern_name('list_submissions')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[page_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating submissions list URL for page {page_id}: {e}")
-        
-        return None
-    
+        cache_key = f"list_submissions_{page_id}"
+        url_pattern = self._get_forms_url_pattern_name('list_submissions')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[page_id]
+        )
+
     def get_form_submissions_delete_url(self, page_id):
         """
         Get the submissions delete URL for a specific form page
@@ -106,19 +77,14 @@ class FormsAdminURLFinder(ModelAdminURLFinder):
         if not page_id:
             return None
         
-        try:
-            cache_key = f"delete_submissions_{page_id}"
-            url_pattern = self._get_forms_url_pattern_name('delete_submissions')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[page_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating submissions delete URL for page {page_id}: {e}")
-        
-        return None
+        cache_key = f"delete_submissions_{page_id}"
+        url_pattern = self._get_forms_url_pattern_name('delete_submissions')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[page_id]
+        )
     
     def get_all_form_page_urls(self, page_id):
         """
@@ -145,12 +111,6 @@ class FormsAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the internal URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_form_pages_with_submissions():
