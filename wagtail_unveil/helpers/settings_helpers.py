@@ -1,39 +1,20 @@
 import logging
 
 from django.apps import apps
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.contrib.settings import registry
 from wagtail.contrib.settings.models import BaseSiteSetting, BaseGenericSetting
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class SettingsAdminURLFinder(ModelAdminURLFinder):
+class SettingsAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Settings.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_settings_url_pattern_name(self, model, action, site_pk=None):
         """
@@ -60,25 +41,20 @@ class SettingsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = f"settings_edit_{model._meta.label}_{site_pk or 'default'}"
-            url_pattern = self._get_settings_url_pattern_name(model, 'edit', site_pk)
-            
-            # Build URL arguments
-            args = [model._meta.app_label, model._meta.model_name]
-            if site_pk:
-                args.append(site_pk)
-            
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=args
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating settings edit URL for {model._meta.label}: {e}")
+        cache_key = f"settings_edit_{model._meta.label}_{site_pk or 'default'}"
+        url_pattern = self._get_settings_url_pattern_name(model, 'edit', site_pk)
         
-        return None
+        # Build URL arguments
+        args = [model._meta.app_label, model._meta.model_name]
+        if site_pk:
+            args.append(site_pk)
+        
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=args
+        )
     
     def get_all_settings_urls(self, model, site_pk=None):
         """
@@ -99,12 +75,6 @@ class SettingsAdminURLFinder(ModelAdminURLFinder):
             urls['edit'] = edit_url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_settings_models():
