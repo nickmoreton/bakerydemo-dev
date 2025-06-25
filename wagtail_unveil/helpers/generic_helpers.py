@@ -1,37 +1,18 @@
 import logging
 
 from django.apps import apps
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class GenericModelAdminURLFinder(ModelAdminURLFinder):
+class GenericModelAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for generic models managed by ModelViewSet.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_url_pattern_name(self, model, action):
         """
