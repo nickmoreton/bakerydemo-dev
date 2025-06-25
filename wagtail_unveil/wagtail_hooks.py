@@ -2,7 +2,7 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView
 
 
 @hooks.register("register_reports_menu_item")
@@ -75,6 +75,20 @@ def register_unveil_site_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_user_report_menu_item():
+    """
+    Register the Unveil User report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil User URL's",
+        reverse("unveil_user_report"),
+        name="unveil_user_report",
+        order=10005,
+        icon_name="user",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -135,5 +149,16 @@ def register_admin_urls():
             "unveil/site-report/results/",
             UnveilSiteReportView.as_view(results_only=True),
             name="unveil_site_report_results",
+        ),
+        # User Report URLs
+        path(
+            "unveil/user-report/",
+            UnveilUserReportView.as_view(),
+            name="unveil_user_report",
+        ),
+        path(
+            "unveil/user-report/results/",
+            UnveilUserReportView.as_view(results_only=True),
+            name="unveil_user_report_results",
         ),
     ]
