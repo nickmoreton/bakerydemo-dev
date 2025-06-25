@@ -254,3 +254,12 @@ if "CSP_DEFAULT_SRC" in os.environ:
         CSP_FRAME_SRC = os.environ.get("CSP_FRAME_SRC").split(",")
     if "CSP_REPORT_URI" in os.environ:
         CSP_REPORT_URI = os.environ.get("CSP_REPORT_URI")
+
+# Wagtail Unveil Settings
+# Configure which models should be included in the Admin Viewset report
+# This prevents duplicate reporting of models already covered by other reports
+WAGTAIL_UNVEIL_ADMIN_VIEWSET_MODELS = [
+    # Example: 'myapp.MyModel',
+    # Example: 'blog.BlogPost',
+    'breads.Country',
+]
