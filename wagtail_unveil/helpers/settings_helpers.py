@@ -5,7 +5,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.urls import NoReverseMatch, reverse
 from wagtail.admin.admin_url_finder import ModelAdminURLFinder
 from wagtail.contrib.settings import registry
-from wagtail.contrib.settings.models import BaseSiteSetting
+from wagtail.contrib.settings.models import BaseSiteSetting, BaseGenericSetting
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +109,7 @@ class SettingsAdminURLFinder(ModelAdminURLFinder):
 
 def get_settings_models():
     """
-    Get all registered settings models by scanning all Django models that inherit from BaseSiteSetting
+    Get all registered settings models by scanning all Django models that inherit from BaseGenericSetting or BaseSiteSetting
     
     Returns:
         List of tuples (model_class, model_name, app_label)
@@ -118,8 +118,8 @@ def get_settings_models():
     try:
         # Get all models from all apps
         for model in apps.get_models():
-            # Check if the model inherits from BaseSiteSetting
-            if issubclass(model, BaseSiteSetting):
+            # Check if the model inherits from BaseGenericSetting or BaseSiteSetting
+            if issubclass(model, (BaseGenericSetting, BaseSiteSetting)):
                 settings_models.append((
                     model,
                     model._meta.model_name,
