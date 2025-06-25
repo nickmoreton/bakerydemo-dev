@@ -1,37 +1,18 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.contrib.redirects.models import Redirect
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class RedirectsAdminURLFinder(ModelAdminURLFinder):
+class RedirectsAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Redirects.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_redirects_url_pattern_name(self, action):
         """
@@ -52,18 +33,13 @@ class RedirectsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "redirects_index"
-            url_pattern = self._get_redirects_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating redirects index URL: {e}")
-        
-        return None
+        cache_key = "redirects_index"
+        url_pattern = self._get_redirects_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
     
     def get_redirect_add_url(self):
         """
@@ -72,18 +48,13 @@ class RedirectsAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "redirect_add"
-            url_pattern = self._get_redirects_url_pattern_name('add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating redirect add URL: {e}")
-        
-        return None
+        cache_key = "redirect_add"
+        url_pattern = self._get_redirects_url_pattern_name('add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
     
     def get_redirect_edit_url(self, redirect_id):
         """
@@ -98,19 +69,14 @@ class RedirectsAdminURLFinder(ModelAdminURLFinder):
         if not redirect_id:
             return None
         
-        try:
-            cache_key = f"redirect_edit_{redirect_id}"
-            url_pattern = self._get_redirects_url_pattern_name('edit')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[redirect_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating redirect edit URL for redirect {redirect_id}: {e}")
-        
-        return None
+        cache_key = f"redirect_edit_{redirect_id}"
+        url_pattern = self._get_redirects_url_pattern_name('edit')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[redirect_id]
+        )
     
     def get_redirect_delete_url(self, redirect_id):
         """
@@ -125,19 +91,14 @@ class RedirectsAdminURLFinder(ModelAdminURLFinder):
         if not redirect_id:
             return None
         
-        try:
-            cache_key = f"redirect_delete_{redirect_id}"
-            url_pattern = self._get_redirects_url_pattern_name('delete')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern,
-                args=[redirect_id]
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating redirect delete URL for redirect {redirect_id}: {e}")
-        
-        return None
+        cache_key = f"redirect_delete_{redirect_id}"
+        url_pattern = self._get_redirects_url_pattern_name('delete')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern,
+            args=[redirect_id]
+        )
     
     def get_all_redirect_urls(self, redirect_id):
         """
@@ -164,12 +125,6 @@ class RedirectsAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_redirects():
