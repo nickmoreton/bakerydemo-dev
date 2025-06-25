@@ -2,7 +2,7 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView
 
 
 @hooks.register("register_reports_menu_item")
@@ -47,6 +47,20 @@ def register_unveil_image_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_document_report_menu_item():
+    """
+    Register the Unveil Document report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Document URL's",
+        reverse("unveil_document_report"),
+        name="unveil_document_report",
+        order=10003,
+        icon_name="doc-full",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -86,15 +100,26 @@ def register_admin_urls():
             UnveilImageReportView.as_view(results_only=True),
             name="unveil_image_report_results",
         ),
-        # Image Report URLs
+        # Document Report URLs
         path(
-            "unveil/image-report/",
-            UnveilImageReportView.as_view(),
-            name="unveil_image_report",
+            "unveil/document-report/",
+            UnveilDocumentReportView.as_view(),
+            name="unveil_document_report",
         ),
         path(
-            "unveil/image-report/results/",
-            UnveilImageReportView.as_view(results_only=True),
-            name="unveil_image_report_results",
+            "unveil/document-report/results/",
+            UnveilDocumentReportView.as_view(results_only=True),
+            name="unveil_document_report_results",
+        ),
+        # Document Report URLs
+        path(
+            "unveil/document-report/",
+            UnveilDocumentReportView.as_view(),
+            name="unveil_document_report",
+        ),
+        path(
+            "unveil/document-report/results/",
+            UnveilDocumentReportView.as_view(results_only=True),
+            name="unveil_document_report_results",
         ),
     ]
