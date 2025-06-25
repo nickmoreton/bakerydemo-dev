@@ -10,6 +10,7 @@ from .views import (
     UnveilPageReportView,
     UnveilRedirectReportView,
     UnveilSearchPromotionReportView,
+    UnveilSettingsReportView,
     UnveilSiteReportView,
     UnveilSnippetReportView,
     UnveilUserReportView,
@@ -156,6 +157,20 @@ def register_unveil_search_promotion_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_settings_report_menu_item():
+    """
+    Register the Unveil Settings report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Settings URL's",
+        reverse("unveil_settings_report"),
+        name="unveil_settings_report",
+        order=10010,
+        icon_name="cog",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -271,5 +286,16 @@ def register_admin_urls():
             "unveil/search-promotion-report/results/",
             UnveilSearchPromotionReportView.as_view(results_only=True),
             name="unveil_search_promotion_report_results",
+        ),
+        # Settings Report URLs
+        path(
+            "unveil/settings-report/",
+            UnveilSettingsReportView.as_view(),
+            name="unveil_settings_report",
+        ),
+        path(
+            "unveil/settings-report/results/",
+            UnveilSettingsReportView.as_view(results_only=True),
+            name="unveil_settings_report_results",
         ),
     ]
