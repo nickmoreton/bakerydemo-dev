@@ -2,7 +2,18 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView, UnveilRedirectReportView, UnveilSearchPromotionReportView
+from .views import (
+    UnveilDocumentReportView,
+    UnveilFormReportView,
+    UnveilImageReportView,
+    UnveilLocaleReportView,
+    UnveilPageReportView,
+    UnveilRedirectReportView,
+    UnveilSearchPromotionReportView,
+    UnveilSiteReportView,
+    UnveilSnippetReportView,
+    UnveilUserReportView,
+)
 
 
 @hooks.register("register_reports_menu_item")

@@ -386,7 +386,7 @@ class UnveilSiteReportView(ReportView):
         
         # Get URLs from different sources using helper functions
         # Get max_instances from settings with a default of 10 (sites are typically few)
-        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 10)
+        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"  # Default base URL
         
         # Collect site URLs
@@ -455,7 +455,7 @@ class UnveilUserReportView(ReportView):
         
         # Get URLs from different sources using helper functions
         # Get max_instances from settings with a default of 10 (users are typically more numerous)
-        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 10)
+        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"  # Default base URL
         
         # Collect user URLs (users and groups)
@@ -524,7 +524,7 @@ class UnveilLocaleReportView(ReportView):
         
         # Get URLs from different sources using helper functions
         # Get max_instances from settings with a default of 20 (locales are typically few but may include many languages)
-        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 20)
+        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"  # Default base URL
         
         # Collect locale URLs
@@ -593,7 +593,7 @@ class UnveilFormReportView(ReportView):
         
         # Get URLs from different sources using helper functions
         # Get max_instances from settings with a default of 20 (forms can have many pages)
-        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 20)
+        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"  # Default base URL
         
         # Collect form URLs
