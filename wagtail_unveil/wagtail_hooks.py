@@ -2,7 +2,7 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView, UnveilRedirectReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView, UnveilRedirectReportView, UnveilSearchPromotionReportView
 
 
 @hooks.register("register_reports_menu_item")
@@ -131,6 +131,20 @@ def register_unveil_redirect_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_search_promotion_report_menu_item():
+    """
+    Register the Unveil Search Promotion report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Search Promotion URL's",
+        reverse("unveil_search_promotion_report"),
+        name="unveil_search_promotion_report",
+        order=10009,
+        icon_name="search",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -235,5 +249,16 @@ def register_admin_urls():
             "unveil/redirect-report/results/",
             UnveilRedirectReportView.as_view(results_only=True),
             name="unveil_redirect_report_results",
+        ),
+        # Search Promotion Report URLs
+        path(
+            "unveil/search-promotion-report/",
+            UnveilSearchPromotionReportView.as_view(),
+            name="unveil_search_promotion_report",
+        ),
+        path(
+            "unveil/search-promotion-report/results/",
+            UnveilSearchPromotionReportView.as_view(results_only=True),
+            name="unveil_search_promotion_report_results",
         ),
     ]
