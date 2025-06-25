@@ -1,37 +1,18 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.images import get_image_model
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class ImageAdminURLFinder(ModelAdminURLFinder):
+class ImageAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Image models.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_url_pattern_name(self, action):
         """
@@ -52,18 +33,13 @@ class ImageAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available/permitted
         """
-        try:
-            cache_key = "add_image"
-            url_pattern = self._get_url_pattern_name('add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating add URL for images: {e}")
-        
-        return None
+        cache_key = "add_image"
+        url_pattern = self._get_url_pattern_name('add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_index_url(self):
         """
@@ -72,18 +48,13 @@ class ImageAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "index_image"
-            url_pattern = self._get_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating index URL for images: {e}")
-        
-        return None
+        cache_key = "index_image"
+        url_pattern = self._get_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_edit_url(self, instance):
         """
@@ -184,12 +155,6 @@ class ImageAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the internal URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_image_urls(output, base_url, max_instances=1, user=None):
