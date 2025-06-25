@@ -3,6 +3,7 @@ from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
 from .views import (
+    UnveilCollectionReportView,
     UnveilDocumentReportView,
     UnveilFormReportView,
     UnveilImageReportView,
@@ -171,6 +172,20 @@ def register_unveil_settings_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_collection_report_menu_item():
+    """
+    Register the Unveil Collection report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Collection URL's",
+        reverse("unveil_collection_report"),
+        name="unveil_collection_report",
+        order=10011,
+        icon_name="folder-open-1",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -297,5 +312,16 @@ def register_admin_urls():
             "unveil/settings-report/results/",
             UnveilSettingsReportView.as_view(results_only=True),
             name="unveil_settings_report_results",
+        ),
+        # Collection Report URLs
+        path(
+            "unveil/collection-report/",
+            UnveilCollectionReportView.as_view(),
+            name="unveil_collection_report",
+        ),
+        path(
+            "unveil/collection-report/results/",
+            UnveilCollectionReportView.as_view(results_only=True),
+            name="unveil_collection_report_results",
         ),
     ]
