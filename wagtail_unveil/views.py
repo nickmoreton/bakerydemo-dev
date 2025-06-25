@@ -13,8 +13,8 @@ class UnveilPageReportView(ReportView):
     index_url_name = "unveil_page_report"
     index_results_url_name = "unveil_page_report_results"
     header_icon = "tasks"
-    template_name = "wagtail_unveil/unveil_page_report.html"
-    results_template_name = "wagtail_unveil/unveil_page_report_results.html"
+    template_name = "wagtail_unveil/unveil_url_report.html"
+    results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Page URL's"
     list_export = [
         "id",
@@ -118,8 +118,8 @@ class UnveilSnippetReportView(ReportView):
     index_url_name = "unveil_snippet_report"
     index_results_url_name = "unveil_snippet_report_results"
     header_icon = "tasks"
-    template_name = "wagtail_unveil/unveil_snippet_report.html"
-    results_template_name = "wagtail_unveil/unveil_snippet_report_results.html"
+    template_name = "wagtail_unveil/unveil_url_report.html"
+    results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Snippet URL's"
     list_export = [
         "id",
