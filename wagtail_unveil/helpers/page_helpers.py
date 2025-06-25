@@ -15,19 +15,6 @@ class PageAdminURLFinder(ModelAdminURLFinder):
     Provides comprehensive URL generation with permission checking and error handling.
     """
     
-    # Map of URL types to their corresponding URL names
-    URL_PATTERNS = {
-        'add': 'wagtailadmin_pages:add',
-        'edit': 'wagtailadmin_pages:edit',
-        'delete': 'wagtailadmin_pages:delete',
-        'copy': 'wagtailadmin_pages:copy',
-        'move': 'wagtailadmin_pages:move',
-        'revisions': 'wagtailadmin_pages:revisions_index',
-        'history': 'wagtailadmin_pages:history',
-        'view_draft': 'wagtailadmin_pages:view_draft',
-        'workflow_history': 'wagtailadmin_pages:workflow_history',
-    }
-    
     def __init__(self, user=None):
         """
         Initialize with optional user for permission checking
@@ -72,7 +59,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
                 return self._get_cached_url(
                     cache_key,
                     reverse,
-                    self.URL_PATTERNS['add'],
+                    'wagtailadmin_pages:add',
                     args=[model._meta.app_label, model._meta.model_name, parent.pk]
                 )
             else:
@@ -109,7 +96,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['edit'],
+            'wagtailadmin_pages:edit',
             args=[instance.pk]
         )
 
@@ -137,7 +124,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['delete'],
+            'wagtailadmin_pages:delete',
             args=[instance.pk]
         )
     
@@ -158,7 +145,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['copy'],
+            'wagtailadmin_pages:copy',
             args=[instance.pk]
         )
     
@@ -179,7 +166,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['move'],
+            'wagtailadmin_pages:move',
             args=[instance.pk]
         )
     
@@ -194,7 +181,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['revisions'],
+            'wagtailadmin_pages:revisions_index',
             args=[instance.pk]
         )
     
@@ -209,7 +196,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['history'],
+            'wagtailadmin_pages:history',
             args=[instance.pk]
         )
     
@@ -224,7 +211,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['view_draft'],
+            'wagtailadmin_pages:view_draft',
             args=[instance.pk]
         )
     
@@ -239,7 +226,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         return self._get_cached_url(
             cache_key,
             reverse,
-            self.URL_PATTERNS['workflow_history'],
+            'wagtailadmin_pages:workflow_history',
             args=[instance.pk]
         )
     
