@@ -26,12 +26,12 @@ class UnveilURLFinder(ModelAdminURLFinder):
     - Consistent interface for subclasses
     """
     
-    def __init__(self, user: User):
+    def __init__(self, user: Optional[User] = None):
         """
         Initialize the URL finder with a user context.
         
         Args:
-            user: The Django user for permission checking
+            user: The Django user for permission checking (optional)
         """
         super().__init__(user)
         self.user = user
