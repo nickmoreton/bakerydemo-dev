@@ -2,37 +2,18 @@ import logging
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class UserAdminURLFinder(ModelAdminURLFinder):
+class UserAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail User and Group models.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def _get_user_url_pattern_name(self, action):
         """
@@ -66,18 +47,13 @@ class UserAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available/permitted
         """
-        try:
-            cache_key = "add_user"
-            url_pattern = self._get_user_url_pattern_name('add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating add URL for users: {e}")
-        
-        return None
+        cache_key = "add_user"
+        url_pattern = self._get_user_url_pattern_name('add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_user_index_url(self):
         """
@@ -86,18 +62,13 @@ class UserAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "index_user"
-            url_pattern = self._get_user_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating index URL for users: {e}")
-        
-        return None
+        cache_key = "index_user"
+        url_pattern = self._get_user_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_user_edit_url(self, instance):
         """
@@ -151,18 +122,13 @@ class UserAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available/permitted
         """
-        try:
-            cache_key = "add_group"
-            url_pattern = self._get_group_url_pattern_name('add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating add URL for groups: {e}")
-        
-        return None
+        cache_key = "add_group"
+        url_pattern = self._get_group_url_pattern_name('add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_group_index_url(self):
         """
@@ -171,18 +137,13 @@ class UserAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = "index_group"
-            url_pattern = self._get_group_url_pattern_name('index')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating index URL for groups: {e}")
-        
-        return None
+        cache_key = "index_group"
+        url_pattern = self._get_group_url_pattern_name('index')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_group_edit_url(self, instance):
         """
@@ -273,12 +234,6 @@ class UserAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the internal URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_user_urls(output, base_url, max_instances=5, user=None):
