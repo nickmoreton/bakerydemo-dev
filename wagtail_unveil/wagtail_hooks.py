@@ -2,7 +2,7 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView, UnveilRedirectReportView
 
 
 @hooks.register("register_reports_menu_item")
@@ -117,6 +117,20 @@ def register_unveil_form_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_redirect_report_menu_item():
+    """
+    Register the Unveil Redirect report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Redirect URL's",
+        reverse("unveil_redirect_report"),
+        name="unveil_redirect_report",
+        order=10008,
+        icon_name="redirect",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -210,5 +224,16 @@ def register_admin_urls():
             "unveil/form-report/results/",
             UnveilFormReportView.as_view(results_only=True),
             name="unveil_form_report_results",
+        ),
+        # Redirect Report URLs
+        path(
+            "unveil/redirect-report/",
+            UnveilRedirectReportView.as_view(),
+            name="unveil_redirect_report",
+        ),
+        path(
+            "unveil/redirect-report/results/",
+            UnveilRedirectReportView.as_view(results_only=True),
+            name="unveil_redirect_report_results",
         ),
     ]
