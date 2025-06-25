@@ -41,19 +41,14 @@ class GenericModelAdminURLFinder(UnveilURLFinder):
         if not model:
             return None
         
-        try:
-            cache_key = f"add_{model._meta.label_lower}"
-            url_pattern = self._get_url_pattern_name(model, 'add')
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating add URL for {model}: {e}")
-        
-        return None
-    
+        cache_key = f"add_{model._meta.label_lower}"
+        url_pattern = self._get_url_pattern_name(model, 'add')
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
+
     def get_list_url(self, model):
         """
         Get the list URL for the given model
@@ -67,18 +62,13 @@ class GenericModelAdminURLFinder(UnveilURLFinder):
         if not model:
             return None
 
-        try:
-            cache_key = f"list_{model._meta.label_lower}"
-            url_pattern = self._get_url_pattern_name(model, 'index')  # ModelViewSet uses 'index' not 'list'
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                url_pattern
-            )
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating list URL for {model}: {e}")
-        
-        return None
+        cache_key = f"list_{model._meta.label_lower}"
+        url_pattern = self._get_url_pattern_name(model, 'index')  # ModelViewSet uses 'index' not 'list'
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            url_pattern
+        )
 
     def get_edit_url(self, instance):
         """
@@ -202,12 +192,6 @@ class GenericModelAdminURLFinder(UnveilURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the internal URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_generic_models():
