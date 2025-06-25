@@ -1,15 +1,15 @@
 import logging
 
-from django.core.exceptions import ImproperlyConfigured
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.models import Page, get_page_models
 from wagtail.permission_policies import ModelPermissionPolicy
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class PageAdminURLFinder(ModelAdminURLFinder):
+class PageAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Page models.
     Provides comprehensive URL generation with permission checking and error handling.
@@ -20,20 +20,7 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         Initialize with optional user for permission checking
         """
         super().__init__(user)
-        self._url_cache = {}
         self.permission_policy = ModelPermissionPolicy(Page)
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, ImproperlyConfigured) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def get_add_url(self, model, parent=None):
         """
@@ -53,22 +40,19 @@ class PageAdminURLFinder(ModelAdminURLFinder):
         if self.user and not self.permission_policy.user_has_permission(self.user, 'add'):
             return None
             
-        try:
-            if parent:
-                cache_key = f"add_{model._meta.label_lower}_{parent.pk}"
-                return self._get_cached_url(
-                    cache_key,
-                    reverse,
-                    'wagtailadmin_pages:add',
-                    args=[model._meta.app_label, model._meta.model_name, parent.pk]
-                )
-            else:
-                # Try to get a default parent (root page)
-                root_page = Page.objects.filter(depth=1).first()
-                if root_page:
-                    return self.get_add_url(model, root_page)
-        except (NoReverseMatch, ImproperlyConfigured, AttributeError) as e:
-            logger.error(f"Error generating add URL for {model}: {e}")
+        if parent:
+            cache_key = f"add_{model._meta.label_lower}_{parent.pk}"
+            return self._get_cached_url(
+                cache_key,
+                reverse,
+                'wagtailadmin_pages:add',
+                args=[model._meta.app_label, model._meta.model_name, parent.pk]
+            )
+        else:
+            # Try to get a default parent (root page)
+            root_page = Page.objects.filter(depth=1).first()
+            if root_page:
+                return self.get_add_url(model, root_page)
         
         return None
 
@@ -258,13 +242,6 @@ class PageAdminURLFinder(ModelAdminURLFinder):
                 urls[url_type] = url
                 
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the internal URL cache
-        """
-        self._url_cache.clear()
-
 
 def get_page_urls(output, base_url, max_instances=1, user=None):
     """
