@@ -6,6 +6,7 @@ from .views import (
     UnveilCollectionReportView,
     UnveilDocumentReportView,
     UnveilFormReportView,
+    UnveilGenericReportView,
     UnveilImageReportView,
     UnveilLocaleReportView,
     UnveilPageReportView,
@@ -186,6 +187,20 @@ def register_unveil_collection_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_generic_report_menu_item():
+    """
+    Register the Unveil Generic Model report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Generic Model URL's",
+        reverse("unveil_generic_report"),
+        name="unveil_generic_report",
+        order=10012,
+        icon_name="cogs",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -323,5 +338,16 @@ def register_admin_urls():
             "unveil/collection-report/results/",
             UnveilCollectionReportView.as_view(results_only=True),
             name="unveil_collection_report_results",
+        ),
+        # Generic Model Report URLs
+        path(
+            "unveil/generic-report/",
+            UnveilGenericReportView.as_view(),
+            name="unveil_generic_report",
+        ),
+        path(
+            "unveil/generic-report/results/",
+            UnveilGenericReportView.as_view(results_only=True),
+            name="unveil_generic_report_results",
         ),
     ]

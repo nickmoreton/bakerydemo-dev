@@ -255,11 +255,15 @@ if "CSP_DEFAULT_SRC" in os.environ:
     if "CSP_REPORT_URI" in os.environ:
         CSP_REPORT_URI = os.environ.get("CSP_REPORT_URI")
 
+
 # Wagtail Unveil Settings
-# Configure which models should be included in the Admin Viewset report
-# This prevents duplicate reporting of models already covered by other reports
-WAGTAIL_UNVEIL_ADMIN_VIEWSET_MODELS = [
-    # Example: 'myapp.MyModel',
-    # Example: 'blog.BlogPost',
+# List of models to include in the Generic Models report
+# These should be models managed by ModelViewSet or other generic views
+# that aren't covered by the standard snippet/page/document reports
+WAGTAIL_UNVEIL_GENERIC_MODELS = [
     'breads.Country',
 ]
+
+# Maximum number of instances to include per model in unveil reports
+# WAGTAIL_UNVEIL_MAX_INSTANCES = 1
+
