@@ -1,36 +1,18 @@
 import logging
 
-from django.urls import NoReverseMatch, reverse
-from wagtail.admin.admin_url_finder import ModelAdminURLFinder
+from django.urls import reverse
 from wagtail.models import Collection
+
+from .base import UnveilURLFinder
 
 logger = logging.getLogger(__name__)
 
 
-class CollectionAdminURLFinder(ModelAdminURLFinder):
+class CollectionAdminURLFinder(UnveilURLFinder):
     """
     Enhanced Admin URL Finder for Wagtail Collections.
     Provides comprehensive URL generation with permission checking and error handling.
     """
-    
-    def __init__(self, user=None):
-        """
-        Initialize with optional user for permission checking
-        """
-        super().__init__(user)
-        self._url_cache = {}
-    
-    def _get_cached_url(self, cache_key, url_func, *args, **kwargs):
-        """
-        Get URL from cache or generate and cache it
-        """
-        if cache_key not in self._url_cache:
-            try:
-                self._url_cache[cache_key] = url_func(*args, **kwargs)
-            except (NoReverseMatch, AttributeError) as e:
-                logger.warning(f"Failed to generate URL for {cache_key}: {e}")
-                self._url_cache[cache_key] = None
-        return self._url_cache[cache_key]
     
     def get_collection_index_url(self):
         """
@@ -39,16 +21,11 @@ class CollectionAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            return self._get_cached_url(
-                'collection_index',
-                reverse,
-                'wagtailadmin_collections:index'
-            )
-        except (NoReverseMatch, AttributeError) as e:
-            logger.error(f"Error generating collection index URL: {e}")
-        
-        return None
+        return self._get_cached_url(
+            'collection_index',
+            reverse,
+            'wagtailadmin_collections:index'
+        )
     
     def get_collection_add_url(self):
         """
@@ -57,16 +34,11 @@ class CollectionAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            return self._get_cached_url(
-                'collection_add',
-                reverse,
-                'wagtailadmin_collections:add'
-            )
-        except (NoReverseMatch, AttributeError) as e:
-            logger.error(f"Error generating collection add URL: {e}")
-        
-        return None
+        return self._get_cached_url(
+            'collection_add',
+            reverse,
+            'wagtailadmin_collections:add'
+        )
     
     def get_collection_edit_url(self, collection_id):
         """
@@ -78,18 +50,13 @@ class CollectionAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = f"collection_edit_{collection_id}"
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                'wagtailadmin_collections:edit',
-                args=[collection_id]
-            )
-        except (NoReverseMatch, AttributeError) as e:
-            logger.error(f"Error generating collection edit URL for ID {collection_id}: {e}")
-        
-        return None
+        cache_key = f"collection_edit_{collection_id}"
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            'wagtailadmin_collections:edit',
+            args=[collection_id]
+        )
     
     def get_collection_delete_url(self, collection_id):
         """
@@ -101,18 +68,13 @@ class CollectionAdminURLFinder(ModelAdminURLFinder):
         Returns:
             String URL or None if not available
         """
-        try:
-            cache_key = f"collection_delete_{collection_id}"
-            return self._get_cached_url(
-                cache_key,
-                reverse,
-                'wagtailadmin_collections:delete',
-                args=[collection_id]
-            )
-        except (NoReverseMatch, AttributeError) as e:
-            logger.error(f"Error generating collection delete URL for ID {collection_id}: {e}")
-        
-        return None
+        cache_key = f"collection_delete_{collection_id}"
+        return self._get_cached_url(
+            cache_key,
+            reverse,
+            'wagtailadmin_collections:delete',
+            args=[collection_id]
+        )
     
     def get_all_collection_urls(self, collection_id):
         """
@@ -137,12 +99,6 @@ class CollectionAdminURLFinder(ModelAdminURLFinder):
             urls['delete'] = delete_url
         
         return urls
-    
-    def clear_cache(self):
-        """
-        Clear the URL cache
-        """
-        self._url_cache.clear()
 
 
 def get_collection_urls(output, base_url, max_instances, user=None):
