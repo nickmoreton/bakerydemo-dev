@@ -2,7 +2,7 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView
+from .views import UnveilPageReportView, UnveilSnippetReportView, UnveilImageReportView, UnveilDocumentReportView, UnveilSiteReportView, UnveilUserReportView, UnveilLocaleReportView, UnveilFormReportView
 
 
 @hooks.register("register_reports_menu_item")
@@ -103,6 +103,20 @@ def register_unveil_locale_report_menu_item():
     )
 
 
+@hooks.register("register_reports_menu_item")
+def register_unveil_form_report_menu_item():
+    """
+    Register the Unveil Form report menu item in the Wagtail admin.
+    """
+    return AdminOnlyMenuItem(
+        "Unveil Form URL's",
+        reverse("unveil_form_report"),
+        name="unveil_form_report",
+        order=10007,
+        icon_name="form",
+    )
+
+
 @hooks.register("register_admin_urls")
 def register_admin_urls():
     """
@@ -186,15 +200,15 @@ def register_admin_urls():
             UnveilLocaleReportView.as_view(results_only=True),
             name="unveil_locale_report_results",
         ),
-        # Locale Report URLs
+        # Form Report URLs
         path(
-            "unveil/locale-report/",
-            UnveilLocaleReportView.as_view(),
-            name="unveil_locale_report",
+            "unveil/form-report/",
+            UnveilFormReportView.as_view(),
+            name="unveil_form_report",
         ),
         path(
-            "unveil/locale-report/results/",
-            UnveilLocaleReportView.as_view(results_only=True),
-            name="unveil_locale_report_results",
+            "unveil/form-report/results/",
+            UnveilFormReportView.as_view(results_only=True),
+            name="unveil_form_report_results",
         ),
     ]
