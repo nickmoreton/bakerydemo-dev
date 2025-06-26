@@ -9,18 +9,20 @@ from wagtail.admin.widgets.button import HeaderButton
 
 from ..helpers.site import get_site_urls
 
+
 class UnveilSiteReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Site URL's"
     header_icon = "tasks"
     paginate_by = None
+
     def get_queryset(self):
         output = StringIO()
-        UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
+        UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
-        max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
+        max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
         user = self.request.user if self.request else None
         site_urls = get_site_urls(output, base_url, max_instances, user)
@@ -28,12 +30,22 @@ class UnveilSiteReportIndexView(IndexView):
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
         return all_urls
+
     def get_header_buttons(self):
-        return [HeaderButton(label="Run Checks", icon_name="link", attrs={"data-action": "check-urls"})]
+        return [
+            HeaderButton(
+                label="Run Checks",
+                icon_name="link",
+                attrs={"data-action": "check-urls"},
+            )
+        ]
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['object_list'] = self.get_queryset()
+        context["object_list"] = self.get_queryset()
         return context
+
+
 class UnveilSiteReportViewSet(ViewSet):
     model = None
     icon = "tasks"
@@ -43,10 +55,22 @@ class UnveilSiteReportViewSet(ViewSet):
     url_prefix = "unveil/site-report"
     export_filename = "site_urls"
     list_export = ["id", "model_name", "url_type", "url"]
-    export_headings = {"id": "ID", "model_name": "Model Name", "url_type": "URL Type", "url": "URL"}
+    export_headings = {
+        "id": "ID",
+        "model_name": "Model Name",
+        "url_type": "URL Type",
+        "url": "URL",
+    }
+
     @property
     def index_view_class(self):
         return UnveilSiteReportIndexView
+
     def get_urlpatterns(self):
-        return [path("", self.index_view_class.as_view(), name="index"), path("results/", self.index_view_class.as_view(), name="results")]
+        return [
+            path("", self.index_view_class.as_view(), name="index"),
+            path("results/", self.index_view_class.as_view(), name="results"),
+        ]
+
+
 unveil_site_viewset = UnveilSiteReportViewSet("unveil_site_report")
