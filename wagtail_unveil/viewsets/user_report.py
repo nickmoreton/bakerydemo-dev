@@ -13,7 +13,7 @@ from ..helpers.user import get_user_urls
 class UnveilUserReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil User URL's"
+    page_title = "Unveil User "
     header_icon = "user"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilUserReportIndexView(IndexView):
 class UnveilUserReportViewSet(ViewSet):
     model = None
     icon = "user"
-    menu_label = "User URLs"
+    menu_label = "User"
     menu_name = "unveil_user_report"
     url_namespace = "unveil_user_report"
     url_prefix = "unveil/user-report"

@@ -13,7 +13,7 @@ from ..helpers.image import get_image_urls
 class UnveilImageReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Image URL's"
+    page_title = "Unveil Image "
     header_icon = "tasks"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilImageReportIndexView(IndexView):
 class UnveilImageReportViewSet(ViewSet):
     model = None
     icon = "tasks"
-    menu_label = "Image URLs"
+    menu_label = "Image"
     menu_name = "unveil_image_report"
     url_namespace = "unveil_image_report"
     url_prefix = "unveil/image-report"

@@ -13,7 +13,7 @@ from ..helpers.generic import get_generic_urls
 class UnveilGenericReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Generic Model URL's"
+    page_title = "Unveil Generic Model "
     header_icon = "cogs"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilGenericReportIndexView(IndexView):
 class UnveilGenericReportViewSet(ViewSet):
     model = None
     icon = "cogs"
-    menu_label = "Generic Model URLs"
+    menu_label = "Generic Model"
     menu_name = "unveil_generic_report"
     url_namespace = "unveil_generic_report"
     url_prefix = "unveil/generic-report"

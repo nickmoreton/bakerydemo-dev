@@ -13,7 +13,7 @@ from ..helpers.search_promotion import get_search_promotions_urls
 class UnveilSearchPromotionReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Search Promotion URL's"
+    page_title = "Unveil Search Promotion "
     header_icon = "search"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
 class UnveilSearchPromotionReportViewSet(ViewSet):
     model = None
     icon = "search"
-    menu_label = "Search Promotion URLs"
+    menu_label = "Search Promotion"
     menu_name = "unveil_search_promotion_report"
     url_namespace = "unveil_search_promotion_report"
     url_prefix = "unveil/search-promotion-report"

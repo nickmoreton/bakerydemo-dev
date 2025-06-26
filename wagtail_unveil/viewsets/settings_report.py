@@ -13,7 +13,7 @@ from ..helpers.settings import get_settings_urls
 class UnveilSettingsReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Settings URL's"
+    page_title = "Unveil Settings "
     header_icon = "cog"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilSettingsReportIndexView(IndexView):
 class UnveilSettingsReportViewSet(ViewSet):
     model = None
     icon = "cog"
-    menu_label = "Settings URLs"
+    menu_label = "Settings"
     menu_name = "unveil_settings_report"
     url_namespace = "unveil_settings_report"
     url_prefix = "unveil/settings-report"

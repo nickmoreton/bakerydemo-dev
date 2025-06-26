@@ -16,7 +16,7 @@ class UnveilDocumentReportIndexView(IndexView):
     """
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Document URL's"
+    page_title = "Unveil Document "
     header_icon = "doc-full" 
     paginate_by = None
     
@@ -79,7 +79,7 @@ class UnveilDocumentReportViewSet(ViewSet):
     # Basic ViewSet configuration
     model = None  # We don't have a specific model as this is a report
     icon = "doc-full"
-    menu_label = "Document URLs"
+    menu_label = "Document"
     menu_name = "unveil_document_report"
     url_namespace = "unveil_document_report"
     url_prefix = "unveil/document-report"

@@ -13,7 +13,7 @@ from ..helpers.form import get_forms_urls
 class UnveilFormReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Form URL's"
+    page_title = "Unveil Form "
     header_icon = "form"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilFormReportIndexView(IndexView):
 class UnveilFormReportViewSet(ViewSet):
     model = None
     icon = "form"
-    menu_label = "Form URLs"
+    menu_label = "Form"
     menu_name = "unveil_form_report"
     url_namespace = "unveil_form_report"
     url_prefix = "unveil/form-report"

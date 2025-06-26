@@ -13,7 +13,7 @@ from ..helpers.snippet import get_snippet_urls
 class UnveilSnippetReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Snippet URL's"
+    page_title = "Unveil Snippet "
     header_icon = "tasks"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilSnippetReportIndexView(IndexView):
 class UnveilSnippetReportViewSet(ViewSet):
     model = None
     icon = "tasks"
-    menu_label = "Snippet URLs"
+    menu_label = "Snippet"
     menu_name = "unveil_snippet_report"
     url_namespace = "unveil_snippet_report"
     url_prefix = "unveil/snippet-report"

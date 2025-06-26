@@ -16,7 +16,7 @@ class UnveilCollectionReportIndexView(IndexView):
     """
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Collection URL's"
+    page_title = "Unveil Collection"
     header_icon = "folder-open-1" 
     paginate_by = None
     
@@ -79,7 +79,7 @@ class UnveilCollectionReportViewSet(ViewSet):
     # Basic ViewSet configuration
     model = None  # We don't have a specific model as this is a report
     icon = "folder-open-1"
-    menu_label = "Collection URLs"
+    menu_label = "Collection"
     menu_name = "unveil_collection_report"
     url_namespace = "unveil_collection_report"
     url_prefix = "unveil/collection-report"

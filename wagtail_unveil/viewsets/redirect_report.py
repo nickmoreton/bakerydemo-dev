@@ -13,7 +13,7 @@ from ..helpers.redirect import get_redirects_urls
 class UnveilRedirectReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Redirect URL's"
+    page_title = "Unveil Redirect "
     header_icon = "redirect"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilRedirectReportIndexView(IndexView):
 class UnveilRedirectReportViewSet(ViewSet):
     model = None
     icon = "redirect"
-    menu_label = "Redirect URLs"
+    menu_label = "Redirect"
     menu_name = "unveil_redirect_report"
     url_namespace = "unveil_redirect_report"
     url_prefix = "unveil/redirect-report"

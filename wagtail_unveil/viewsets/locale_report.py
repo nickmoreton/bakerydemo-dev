@@ -13,7 +13,7 @@ from ..helpers.locale import get_locale_urls
 class UnveilLocaleReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Locale URL's"
+    page_title = "Unveil Locale "
     header_icon = "globe"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilLocaleReportIndexView(IndexView):
 class UnveilLocaleReportViewSet(ViewSet):
     model = None
     icon = "globe"
-    menu_label = "Locale URLs"
+    menu_label = "Locale"
     menu_name = "unveil_locale_report"
     url_namespace = "unveil_locale_report"
     url_prefix = "unveil/locale-report"

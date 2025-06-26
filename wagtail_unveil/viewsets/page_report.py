@@ -13,7 +13,7 @@ from ..helpers.page import get_page_urls
 class UnveilPageReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Page URL's"
+    page_title = "Unveil Page "
     header_icon = "tasks"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilPageReportIndexView(IndexView):
 class UnveilPageReportViewSet(ViewSet):
     model = None
     icon = "tasks"
-    menu_label = "Page URLs"
+    menu_label = "Page"
     menu_name = "unveil_page_report"
     url_namespace = "unveil_page_report"
     url_prefix = "unveil/page-report"

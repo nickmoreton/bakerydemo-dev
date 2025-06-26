@@ -13,7 +13,7 @@ from ..helpers.site import get_site_urls
 class UnveilSiteReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Site URL's"
+    page_title = "Unveil Site "
     header_icon = "tasks"
     paginate_by = None
 
@@ -49,7 +49,7 @@ class UnveilSiteReportIndexView(IndexView):
 class UnveilSiteReportViewSet(ViewSet):
     model = None
     icon = "tasks"
-    menu_label = "Site URLs"
+    menu_label = "Site"
     menu_name = "unveil_site_report"
     url_namespace = "unveil_site_report"
     url_prefix = "unveil/site-report"
