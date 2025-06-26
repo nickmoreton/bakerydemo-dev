@@ -2,19 +2,19 @@ from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
 
-from .views.collection_report import UnveilCollectionReportView
-from .views.document_report import UnveilDocumentReportView
-from .views.form_report import UnveilFormReportView
-from .views.generic_report import UnveilGenericReportView
-from .views.image_report import UnveilImageReportView
-from .views.locale_report import UnveilLocaleReportView
-from .views.page_report import UnveilPageReportView
-from .views.redirect_report import UnveilRedirectReportView
-from .views.search_promotion_report import UnveilSearchPromotionReportView
-from .views.settings_report import UnveilSettingsReportView
-from .views.site_report import UnveilSiteReportView
-from .views.snippet_report import UnveilSnippetReportView
-from .views.user_report import UnveilUserReportView
+from .reports.collection_report import UnveilCollectionReportView
+from .reports.document_report import UnveilDocumentReportView
+from .reports.form_report import UnveilFormReportView
+from .reports.generic_report import UnveilGenericReportView
+from .reports.image_report import UnveilImageReportView
+from .reports.locale_report import UnveilLocaleReportView
+from .reports.page_report import UnveilPageReportView
+from .reports.redirect_report import UnveilRedirectReportView
+from .reports.search_promotion_report import UnveilSearchPromotionReportView
+from .reports.settings_report import UnveilSettingsReportView
+from .reports.site_report import UnveilSiteReportView
+from .reports.snippet_report import UnveilSnippetReportView
+from .reports.user_report import UnveilUserReportView
 
 
 @hooks.register("register_reports_menu_item")
