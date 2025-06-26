@@ -18,6 +18,7 @@ from .reports.user_report import UnveilUserReportView
 
 # Import ViewSet Group  
 from .viewsets.collection_report import unveil_collection_viewset
+from .viewsets.document_report import unveil_document_viewset
 
 
 class UnveilReportsViewSetGroup(ViewSetGroup):
@@ -32,6 +33,7 @@ class UnveilReportsViewSetGroup(ViewSetGroup):
     menu_order = 400  # Position in the menu
     items = (
         unveil_collection_viewset,
+        unveil_document_viewset,
     )
 
 
@@ -87,18 +89,19 @@ def register_unveil_image_report_menu_item():
     )
 
 
-@hooks.register("register_reports_menu_item")
-def register_unveil_document_report_menu_item():
-    """
-    Register the Unveil Document report menu item in the Wagtail admin.
-    """
-    return AdminOnlyMenuItem(
-        "Unveil Document URL's",
-        reverse("unveil_document_report"),
-        name="unveil_document_report",
-        order=10003,
-        icon_name="doc-full",
-    )
+# Document report is now part of the ViewSet group
+# @hooks.register("register_reports_menu_item")
+# def register_unveil_document_report_menu_item():
+#     """
+#     Register the Unveil Document report menu item in the Wagtail admin.
+#     """
+#     return AdminOnlyMenuItem(
+#         "Unveil Document URL's",
+#         reverse("unveil_document_report"),
+#         name="unveil_document_report",
+#         order=10003,
+#         icon_name="doc-full",
+#     )
 
 
 @hooks.register("register_reports_menu_item")
