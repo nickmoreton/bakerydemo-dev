@@ -1,8 +1,8 @@
 from django.urls import path, reverse
 from wagtail import hooks
 from wagtail.admin.menu import AdminOnlyMenuItem
+from wagtail.admin.viewsets.base import ViewSetGroup
 
-from .reports.collection_report import UnveilCollectionReportView
 from .reports.document_report import UnveilDocumentReportView
 from .reports.form_report import UnveilFormReportView
 from .reports.generic_report import UnveilGenericReportView
@@ -15,6 +15,34 @@ from .reports.settings_report import UnveilSettingsReportView
 from .reports.site_report import UnveilSiteReportView
 from .reports.snippet_report import UnveilSnippetReportView
 from .reports.user_report import UnveilUserReportView
+
+# Import ViewSet Group  
+from .viewsets.collection_report import unveil_collection_viewset
+
+
+class UnveilReportsViewSetGroup(ViewSetGroup):
+    """
+    ViewSet group for all Unveil reports.
+    
+    This groups all Unveil report ViewSets under a single "Unveil" menu item
+    in the Wagtail admin interface.
+    """
+    menu_label = "Unveil Reports"
+    menu_icon = "tasks"
+    menu_order = 400  # Position in the menu
+    items = (
+        unveil_collection_viewset,
+    )
+
+
+# Register the ViewSet Group for Unveil Reports
+@hooks.register("register_admin_viewset")
+def register_unveil_reports_viewset_group():
+    """
+    Register the Unveil Reports ViewSet Group with Wagtail admin.
+    This creates a grouped menu structure for all Unveil reports.
+    """
+    return UnveilReportsViewSetGroup()
 
 
 @hooks.register("register_reports_menu_item")
@@ -172,20 +200,6 @@ def register_unveil_settings_report_menu_item():
 
 
 @hooks.register("register_reports_menu_item")
-def register_unveil_collection_report_menu_item():
-    """
-    Register the Unveil Collection report menu item in the Wagtail admin.
-    """
-    return AdminOnlyMenuItem(
-        "Unveil Collection URL's",
-        reverse("unveil_collection_report"),
-        name="unveil_collection_report",
-        order=10011,
-        icon_name="folder-open-1",
-    )
-
-
-@hooks.register("register_reports_menu_item")
 def register_unveil_generic_report_menu_item():
     """
     Register the Unveil Generic Model report menu item in the Wagtail admin.
@@ -326,17 +340,8 @@ def register_admin_urls():
             UnveilSettingsReportView.as_view(results_only=True),
             name="unveil_settings_report_results",
         ),
-        # Collection Report URLs
-        path(
-            "unveil/collection-report/",
-            UnveilCollectionReportView.as_view(),
-            name="unveil_collection_report",
-        ),
-        path(
-            "unveil/collection-report/results/",
-            UnveilCollectionReportView.as_view(results_only=True),
-            name="unveil_collection_report_results",
-        ),
+# Collection Report URLs (ViewSet-based - no longer needed here)
+        # The ViewSet handles its own URL registration
         # Generic Model Report URLs
         path(
             "unveil/generic-report/",
