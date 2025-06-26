@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.snippet_helpers import get_snippet_urls
+from ..helpers.snippet import get_snippet_urls
 
 
 class UnveilSnippetReportView(ReportView):

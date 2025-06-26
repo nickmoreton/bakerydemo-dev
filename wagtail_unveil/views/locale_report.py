@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.locale_helpers import get_locale_urls
+from ..helpers.locale import get_locale_urls
 
 
 class UnveilLocaleReportView(ReportView):

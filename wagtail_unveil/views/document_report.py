@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.document_helpers import get_document_urls
+from ..helpers.document import get_document_urls
 
 
 class UnveilDocumentReportView(ReportView):

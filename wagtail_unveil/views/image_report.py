@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.image_helpers import get_image_urls
+from ..helpers.image import get_image_urls
 
 
 class UnveilImageReportView(ReportView):

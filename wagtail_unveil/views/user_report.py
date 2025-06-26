@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.user_helpers import get_user_urls
+from ..helpers.user import get_user_urls
 
 
 class UnveilUserReportView(ReportView):

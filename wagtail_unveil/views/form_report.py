@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.form_helpers import get_forms_urls
+from ..helpers.form import get_forms_urls
 
 
 class UnveilFormReportView(ReportView):

@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.redirect_helpers import get_redirects_urls
+from ..helpers.redirect import get_redirects_urls
 
 
 class UnveilRedirectReportView(ReportView):

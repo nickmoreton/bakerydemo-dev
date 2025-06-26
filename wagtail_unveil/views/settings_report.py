@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.settings_helpers import get_settings_urls
+from ..helpers.settings import get_settings_urls
 
 
 class UnveilSettingsReportView(ReportView):

@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.search_promotion_helpers import get_search_promotions_urls
+from ..helpers.search_promotion import get_search_promotions_urls
 
 
 class UnveilSearchPromotionReportView(ReportView):

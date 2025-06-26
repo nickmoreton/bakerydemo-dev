@@ -5,7 +5,7 @@ from django.conf import settings
 from wagtail.admin.views.reports import ReportView
 from wagtail.admin.widgets.button import HeaderButton
 
-from ..helpers.collection_helpers import get_collection_urls
+from ..helpers.collection import get_collection_urls
 
 
 class UnveilCollectionReportView(ReportView):
