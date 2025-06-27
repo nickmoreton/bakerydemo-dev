@@ -1,76 +1,120 @@
 from collections import namedtuple
-from io import StringIO
 
 from django.conf import settings
-from django.urls import path
+from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.views.generic import IndexView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
+from wagtail.contrib.search_promotions.models import SearchPromotion
 
-from ..helpers.search_promotion import get_search_promotions_urls
+
+def get_search_promotion_index_url():
+    try:
+        return reverse('wagtailsearchpromotions:index')
+    except NoReverseMatch:
+        return None
+
+
+def get_search_promotion_add_url():
+    try:
+        return reverse('wagtailsearchpromotions:add')
+    except NoReverseMatch:
+        return None
+
+
+def get_search_promotion_edit_url(promotion_id):
+    try:
+        return reverse('wagtailsearchpromotions:edit', args=[promotion_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_search_promotion_delete_url(promotion_id):
+    try:
+        return reverse('wagtailsearchpromotions:delete', args=[promotion_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_search_promotion_urls(base_url, max_instances, user=None):
+    """Return a list of tuples (model_name, url_type, url) for search promotions."""
+    urls = []
+    index_url = get_search_promotion_index_url()
+    if index_url:
+        urls.append(('wagtail.SearchPromotion', 'index', f"{base_url}{index_url}"))
+    add_url = get_search_promotion_add_url()
+    if add_url:
+        urls.append(('wagtail.SearchPromotion', 'add', f"{base_url}{add_url}"))
+    try:
+        promotions = SearchPromotion.objects.all()[:max_instances]
+        for promotion in promotions:
+            promotion_model_name = f"wagtail.SearchPromotion_{promotion.id}_{getattr(promotion, 'query', '')}"
+            edit_url = get_search_promotion_edit_url(promotion.id)
+            if edit_url:
+                urls.append((promotion_model_name, 'edit', f"{base_url}{edit_url}"))
+            delete_url = get_search_promotion_delete_url(promotion.id)
+            if delete_url:
+                urls.append((promotion_model_name, 'delete', f"{base_url}{delete_url}"))
+    except SearchPromotion.DoesNotExist:
+        pass
+    except (AttributeError, ValueError, TypeError):
+        pass
+    return urls
 
 
 class UnveilSearchPromotionReportIndexView(IndexView):
+    """
+    Custom index view for the Search Promotion Report ViewSet.
+    """
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
-    page_title = "Unveil Search Promotion "
+    page_title = "Unveil Search Promotion"
     header_icon = "search"
     paginate_by = None
 
     def get_queryset(self):
-        output = StringIO()
+        """Generate the queryset for search promotion URLs."""
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
         user = self.request.user if self.request else None
-        promo_urls = get_search_promotions_urls(output, base_url, max_instances, user)
+        promo_urls = get_search_promotion_urls(base_url, max_instances, user)
         for model_name, url_type, url in promo_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
         return all_urls
 
     def get_header_buttons(self):
+        """Get buttons to display in the header."""
         return [
             HeaderButton(
                 label="Run Checks",
                 icon_name="link",
                 attrs={"data-action": "check-urls"},
-            )
+            ),
         ]
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = self.get_queryset()
-        return context
 
 
 class UnveilSearchPromotionReportViewSet(ViewSet):
-    model = None
+    """
+    ViewSet for Unveil Search Promotion reports using Wagtail's ViewSet pattern.
+    """
     icon = "search"
     menu_label = "Search Promotion"
     menu_name = "unveil_search_promotion_report"
     url_namespace = "unveil_search_promotion_report"
     url_prefix = "unveil/search-promotion-report"
-    export_filename = "search_promotion_urls"
-    list_export = ["id", "model_name", "url_type", "url"]
-    export_headings = {
-        "id": "ID",
-        "model_name": "Model Name",
-        "url_type": "URL Type",
-        "url": "URL",
-    }
-
-    @property
-    def index_view_class(self):
-        return UnveilSearchPromotionReportIndexView
+    index_view_class = UnveilSearchPromotionReportIndexView
 
     def get_urlpatterns(self):
+        """Return the URL patterns for this ViewSet."""
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
         ]
 
 
-unveil_search_promotion_viewset = UnveilSearchPromotionReportViewSet("unveil_search_promotion_report")
+# Create an instance of the ViewSet to be registered
+unveil_search_promotion_viewset = UnveilSearchPromotionReportViewSet()
