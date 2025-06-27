@@ -1,13 +1,66 @@
 from collections import namedtuple
-from io import StringIO
 
 from django.conf import settings
-from django.urls import path
+from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.views.generic import IndexView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
+from wagtail.models import Locale
 
-from ..helpers.locale import get_locale_urls
+
+def get_locale_index_url():
+    try:
+        return reverse('wagtaillocales:index')
+    except NoReverseMatch:
+        return None
+
+
+# This path doesn't exist
+# def get_locale_add_url():
+#     try:
+#         return reverse('wagtaillocales:add')
+#     except NoReverseMatch:
+#         return None
+
+
+def get_locale_edit_url(locale_id):
+    try:
+        return reverse('wagtaillocales:edit', args=[locale_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_locale_delete_url(locale_id):
+    try:
+        return reverse('wagtaillocales:delete', args=[locale_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_locale_urls(base_url, max_instances, user=None):
+    """Return a list of tuples (model_name, url_type, url) for locales."""
+    urls = []
+    index_url = get_locale_index_url()
+    if index_url:
+        urls.append(('wagtail.Locale', 'index', f"{base_url}{index_url}"))
+    # add_url = get_locale_add_url()
+    # if add_url:
+    #     urls.append(('wagtail.Locale', 'add', f"{base_url}{add_url}"))
+    try:
+        locales = Locale.objects.all()[:max_instances]
+        for locale in locales:
+            locale_model_name = f"wagtail.Locale_{locale.id}_{getattr(locale, 'language_code', getattr(locale, 'code', ''))}"
+            edit_url = get_locale_edit_url(locale.id)
+            if edit_url:
+                urls.append((locale_model_name, 'edit', f"{base_url}{edit_url}"))
+            delete_url = get_locale_delete_url(locale.id)
+            if delete_url:
+                urls.append((locale_model_name, 'delete', f"{base_url}{delete_url}"))
+    except Locale.DoesNotExist:
+        pass
+    except (AttributeError, ValueError, TypeError):
+        pass
+    return urls
 
 
 class UnveilLocaleReportIndexView(IndexView):
@@ -18,14 +71,13 @@ class UnveilLocaleReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        output = StringIO()
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
         user = self.request.user if self.request else None
-        locale_urls = get_locale_urls(output, base_url, max_instances, user)
+        locale_urls = get_locale_urls(base_url, max_instances, user)
         for model_name, url_type, url in locale_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
@@ -47,24 +99,12 @@ class UnveilLocaleReportIndexView(IndexView):
 
 
 class UnveilLocaleReportViewSet(ViewSet):
-    model = None
     icon = "globe"
     menu_label = "Locale"
     menu_name = "unveil_locale_report"
     url_namespace = "unveil_locale_report"
     url_prefix = "unveil/locale-report"
-    export_filename = "locale_urls"
-    list_export = ["id", "model_name", "url_type", "url"]
-    export_headings = {
-        "id": "ID",
-        "model_name": "Model Name",
-        "url_type": "URL Type",
-        "url": "URL",
-    }
-
-    @property
-    def index_view_class(self):
-        return UnveilLocaleReportIndexView
+    index_view_class = UnveilLocaleReportIndexView
 
     def get_urlpatterns(self):
         return [
