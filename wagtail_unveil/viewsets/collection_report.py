@@ -8,6 +8,56 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Collection
 
 
+def get_collection_index_url():
+    try:
+        return reverse('wagtailadmin_collections:index')
+    except NoReverseMatch:
+        return None
+
+def get_collection_add_url():
+    try:
+        return reverse('wagtailadmin_collections:add')
+    except NoReverseMatch:
+        return None
+
+def get_collection_edit_url(collection_id):
+    try:
+        return reverse('wagtailadmin_collections:edit', args=[collection_id])
+    except NoReverseMatch:
+        return None
+
+def get_collection_delete_url(collection_id):
+    try:
+        return reverse('wagtailadmin_collections:delete', args=[collection_id])
+    except NoReverseMatch:
+        return None
+
+def get_collection_urls(base_url, max_instances, user=None):
+    """Return a list of tuples (model_name, url_type, full_url) for collections."""
+    urls = []
+    index_url = get_collection_index_url()
+    if index_url:
+        urls.append(('wagtail.Collection', 'index', f"{base_url}{index_url}"))
+    add_url = get_collection_add_url()
+    if add_url:
+        urls.append(('wagtail.Collection', 'add', f"{base_url}{add_url}"))
+    try:
+        collections = Collection.objects.exclude(depth=1)[:max_instances]
+        for collection in collections:
+            collection_model_name = f"wagtail.Collection_{collection.id}_{collection.name}"
+            edit_url = get_collection_edit_url(collection.id)
+            if edit_url:
+                urls.append((collection_model_name, 'edit', f"{base_url}{edit_url}"))
+            delete_url = get_collection_delete_url(collection.id)
+            if delete_url:
+                urls.append((collection_model_name, 'delete', f"{base_url}{delete_url}"))
+    except Collection.DoesNotExist:
+        pass
+    except (AttributeError, ValueError, TypeError):
+        pass
+    return urls
+
+
 class UnveilCollectionReportIndexView(IndexView):
     """
     Custom index view for the Collection Report ViewSet.
@@ -84,52 +134,3 @@ class UnveilCollectionReportViewSet(ViewSet):
 
 # Create an instance of the ViewSet to be registered
 unveil_collection_viewset = UnveilCollectionReportViewSet()
-
-def get_collection_index_url():
-    try:
-        return reverse('wagtailadmin_collections:index')
-    except NoReverseMatch:
-        return None
-
-def get_collection_add_url():
-    try:
-        return reverse('wagtailadmin_collections:add')
-    except NoReverseMatch:
-        return None
-
-def get_collection_edit_url(collection_id):
-    try:
-        return reverse('wagtailadmin_collections:edit', args=[collection_id])
-    except NoReverseMatch:
-        return None
-
-def get_collection_delete_url(collection_id):
-    try:
-        return reverse('wagtailadmin_collections:delete', args=[collection_id])
-    except NoReverseMatch:
-        return None
-
-def get_collection_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, full_url) for collections."""
-    urls = []
-    index_url = get_collection_index_url()
-    if index_url:
-        urls.append(('wagtail.Collection', 'index', f"{base_url}{index_url}"))
-    add_url = get_collection_add_url()
-    if add_url:
-        urls.append(('wagtail.Collection', 'add', f"{base_url}{add_url}"))
-    try:
-        collections = Collection.objects.exclude(depth=1)[:max_instances]
-        for collection in collections:
-            collection_model_name = f"wagtail.Collection_{collection.id}_{collection.name}"
-            edit_url = get_collection_edit_url(collection.id)
-            if edit_url:
-                urls.append((collection_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_collection_delete_url(collection.id)
-            if delete_url:
-                urls.append((collection_model_name, 'delete', f"{base_url}{delete_url}"))
-    except Collection.DoesNotExist:
-        pass
-    except (AttributeError, ValueError, TypeError):
-        pass
-    return urls
