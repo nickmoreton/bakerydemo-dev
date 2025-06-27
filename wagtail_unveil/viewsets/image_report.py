@@ -1,13 +1,66 @@
 from collections import namedtuple
-from io import StringIO
 
 from django.conf import settings
-from django.urls import path
+from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.views.generic import IndexView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
+from wagtail.images import get_image_model
 
-from ..helpers.image import get_image_urls
+
+def get_image_index_url():
+    try:
+        return reverse('wagtailimages:index')
+    except NoReverseMatch:
+        return None
+
+
+def get_image_add_url():
+    try:
+        return reverse('wagtailimages:add')
+    except NoReverseMatch:
+        return None
+
+
+def get_image_edit_url(image_id):
+    try:
+        return reverse('wagtailimages:edit', args=[image_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_image_delete_url(image_id):
+    try:
+        return reverse('wagtailimages:delete', args=[image_id])
+    except NoReverseMatch:
+        return None
+
+
+def get_image_urls(base_url, max_instances, user=None):
+    """Return a list of tuples (model_name, url_type, url) for images."""
+    urls = []
+    index_url = get_image_index_url()
+    if index_url:
+        urls.append(('wagtail.Image', 'index', f"{base_url}{index_url}"))
+    add_url = get_image_add_url()
+    if add_url:
+        urls.append(('wagtail.Image', 'add', f"{base_url}{add_url}"))
+    Image = get_image_model()
+    try:
+        images = Image.objects.all()[:max_instances]
+        for image in images:
+            image_model_name = f"wagtail.Image_{image.id}_{getattr(image, 'title', getattr(image, 'name', ''))}"
+            edit_url = get_image_edit_url(image.id)
+            if edit_url:
+                urls.append((image_model_name, 'edit', f"{base_url}{edit_url}"))
+            delete_url = get_image_delete_url(image.id)
+            if delete_url:
+                urls.append((image_model_name, 'delete', f"{base_url}{delete_url}"))
+    except Image.DoesNotExist:
+        pass
+    except (AttributeError, ValueError, TypeError):
+        pass
+    return urls
 
 
 class UnveilImageReportIndexView(IndexView):
@@ -18,14 +71,13 @@ class UnveilImageReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        output = StringIO()
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
         user = self.request.user if self.request else None
-        image_urls = get_image_urls(output, base_url, max_instances, user)
+        image_urls = get_image_urls(base_url, max_instances, user)
         for model_name, url_type, url in image_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
@@ -47,24 +99,12 @@ class UnveilImageReportIndexView(IndexView):
 
 
 class UnveilImageReportViewSet(ViewSet):
-    model = None
     icon = "tasks"
     menu_label = "Image"
     menu_name = "unveil_image_report"
     url_namespace = "unveil_image_report"
     url_prefix = "unveil/image-report"
-    export_filename = "image_urls"
-    list_export = ["id", "model_name", "url_type", "url"]
-    export_headings = {
-        "id": "ID",
-        "model_name": "Model Name",
-        "url_type": "URL Type",
-        "url": "URL",
-    }
-
-    @property
-    def index_view_class(self):
-        return UnveilImageReportIndexView
+    index_view_class = UnveilImageReportIndexView
 
     def get_urlpatterns(self):
         return [
