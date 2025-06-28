@@ -9,32 +9,6 @@ from wagtail.contrib.forms.models import FormSubmission
 from wagtail.models import Page
 
 
-def get_forms_index_url():
-    # Get the main forms index URL
-    try:
-        return reverse('wagtailforms:index')
-    except NoReverseMatch:
-        return None
-
-
-def get_form_submissions_list_url(page_id):
-    # Get the submissions list URL for a form page
-    if not page_id:
-        return None
-    try:
-        return reverse('wagtailforms:list_submissions', args=[page_id])
-    except NoReverseMatch:
-        return None
-
-
-def get_form_submissions_delete_url(page_id):
-    # Get the submissions delete URL for a form page
-    if not page_id:
-        return None
-    try:
-        return reverse('wagtailforms:delete_submissions', args=[page_id])
-    except NoReverseMatch:
-        return None
 
 
 def get_form_pages_with_submissions():
@@ -72,44 +46,50 @@ def get_forms_urls(base_url, max_instances=10):
     
     # Get the FormSubmission model name
     form_submission_model_name = f"{FormSubmission._meta.app_label}.{FormSubmission.__name__}"
-    
+
     # Get forms index URL
-    forms_index_url = get_forms_index_url()
-    if forms_index_url:
+    try:
+        forms_index_url = reverse('wagtailforms:index')
         urls.append((form_submission_model_name, "forms_index", f"{base_url}{forms_index_url}"))
-    
+    except NoReverseMatch:
+        pass
+
     # Get form pages with submissions
     form_pages = get_form_pages_with_submissions()
-    
+
     # Limit the number of form pages processed
     if max_instances:
         limited_form_pages = form_pages[:max_instances]
     else:
         limited_form_pages = form_pages
-    
+
     for page_id, page_title, page_class_name, submission_count in limited_form_pages:
         # Create a model identifier that includes the page info
         form_page_model_name = f"{form_submission_model_name}_Page_{page_id}"
-        
+
         # Get submissions list URL
-        list_url = get_form_submissions_list_url(page_id)
-        if list_url:
+        try:
+            list_url = reverse('wagtailforms:list_submissions', args=[page_id])
             urls.append((form_page_model_name, "list_submissions", f"{base_url}{list_url}"))
-        
+        except NoReverseMatch:
+            pass
+
         # Get submissions delete URL
-        delete_url = get_form_submissions_delete_url(page_id)
-        if delete_url:
+        try:
+            delete_url = reverse('wagtailforms:delete_submissions', args=[page_id])
             urls.append((form_page_model_name, "delete_submissions", f"{base_url}{delete_url}"))
-        
+        except NoReverseMatch:
+            pass
+
         # Also add the frontend form URL if available
         try:
             page = Page.objects.get(id=page_id)
             frontend_url = page.url
             if frontend_url:
-                urls.append((form_page_model_name, "frontend_form", f"{base_url.rstrip('/')}{frontend_url}"))
+                urls.append((form_page_model_name, "frontend_form", f"{base_url.rstrip('/')}" + frontend_url))
         except (Page.DoesNotExist, AttributeError, ValueError, TypeError):
             pass
-    
+
     return urls
 
 

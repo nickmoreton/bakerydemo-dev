@@ -8,53 +8,38 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Collection
 
 
-def get_collection_index_url():
-    # Get the index URL for collections
-    try:
-        return reverse('wagtailadmin_collections:index')
-    except NoReverseMatch:
-        return None
-
-def get_collection_add_url():
-    # Get the add URL for collections
-    try:
-        return reverse('wagtailadmin_collections:add')
-    except NoReverseMatch:
-        return None
-
-def get_collection_edit_url(collection_id):
-    # Get the edit URL for a collection
-    try:
-        return reverse('wagtailadmin_collections:edit', args=[collection_id])
-    except NoReverseMatch:
-        return None
-
-def get_collection_delete_url(collection_id):
-    # Get the delete URL for a collection
-    try:
-        return reverse('wagtailadmin_collections:delete', args=[collection_id])
-    except NoReverseMatch:
-        return None
 
 def get_collection_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for collections
     urls = []
-    index_url = get_collection_index_url()
-    if index_url:
+    # Get the index URL for collections
+    try:
+        index_url = reverse('wagtailadmin_collections:index')
         urls.append(('wagtail.Collection', 'index', f"{base_url}{index_url}"))
-    add_url = get_collection_add_url()
-    if add_url:
+    except NoReverseMatch:
+        pass
+    # Get the add URL for collections
+    try:
+        add_url = reverse('wagtailadmin_collections:add')
         urls.append(('wagtail.Collection', 'add', f"{base_url}{add_url}"))
+    except NoReverseMatch:
+        pass
     try:
         collections = Collection.objects.exclude(depth=1)[:max_instances]
         for collection in collections:
             collection_model_name = f"wagtail.Collection_{collection.id}_{collection.name}"
-            edit_url = get_collection_edit_url(collection.id)
-            if edit_url:
+            # Get the edit URL for a collection
+            try:
+                edit_url = reverse('wagtailadmin_collections:edit', args=[collection.id])
                 urls.append((collection_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_collection_delete_url(collection.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Get the delete URL for a collection
+            try:
+                delete_url = reverse('wagtailadmin_collections:delete', args=[collection.id])
                 urls.append((collection_model_name, 'delete', f"{base_url}{delete_url}"))
+            except NoReverseMatch:
+                pass
     except Collection.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):

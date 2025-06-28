@@ -8,57 +8,37 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.contrib.redirects.models import Redirect
 
 
-def get_redirect_index_url():
-    # Get the index URL for redirects
-    try:
-        return reverse('wagtailredirects:index')
-    except NoReverseMatch:
-        return None
-
-
-def get_redirect_add_url():
-    # Get the add URL for redirects
-    try:
-        return reverse('wagtailredirects:add')
-    except NoReverseMatch:
-        return None
-
-
-def get_redirect_edit_url(redirect_id):
-    # Get the edit URL for a redirect
-    try:
-        return reverse('wagtailredirects:edit', args=[redirect_id])
-    except NoReverseMatch:
-        return None
-
-
-def get_redirect_delete_url(redirect_id):
-    # Get the delete URL for a redirect
-    try:
-        return reverse('wagtailredirects:delete', args=[redirect_id])
-    except NoReverseMatch:
-        return None
-
-
 def get_redirect_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for redirects
     urls = []
-    index_url = get_redirect_index_url()
-    if index_url:
+    # Get the index URL for redirects
+    try:
+        index_url = reverse('wagtailredirects:index')
         urls.append(('wagtail.Redirect', 'index', f"{base_url}{index_url}"))
-    add_url = get_redirect_add_url()
-    if add_url:
+    except NoReverseMatch:
+        pass
+    # Get the add URL for redirects
+    try:
+        add_url = reverse('wagtailredirects:add')
         urls.append(('wagtail.Redirect', 'add', f"{base_url}{add_url}"))
+    except NoReverseMatch:
+        pass
     try:
         redirects = Redirect.objects.all()[:max_instances]
         for redirect in redirects:
             redirect_model_name = f"wagtail.Redirect_{redirect.id}_{getattr(redirect, 'old_path', '')}"
-            edit_url = get_redirect_edit_url(redirect.id)
-            if edit_url:
+            # Get the edit URL for a redirect
+            try:
+                edit_url = reverse('wagtailredirects:edit', args=[redirect.id])
                 urls.append((redirect_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_redirect_delete_url(redirect.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Get the delete URL for a redirect
+            try:
+                delete_url = reverse('wagtailredirects:delete', args=[redirect.id])
                 urls.append((redirect_model_name, 'delete', f"{base_url}{delete_url}"))
+            except NoReverseMatch:
+                pass
     except Redirect.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):

@@ -8,54 +8,39 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.documents import get_document_model
 
 
-def get_document_index_url():
-    # Get the index URL for documents
-    try:
-        return reverse('wagtaildocs:index')
-    except NoReverseMatch:
-        return None
-
-def get_document_add_url():
-    # Get the add URL for documents
-    try:
-        return reverse('wagtaildocs:add')
-    except NoReverseMatch:
-        return None
-
-def get_document_edit_url(document_id):
-    # Get the edit URL for a document
-    try:
-        return reverse('wagtaildocs:edit', args=[document_id])
-    except NoReverseMatch:
-        return None
-
-def get_document_delete_url(document_id):
-    # Get the delete URL for a document
-    try:
-        return reverse('wagtaildocs:delete', args=[document_id])
-    except NoReverseMatch:
-        return None
 
 def get_document_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for documents
     urls = []
-    index_url = get_document_index_url()
-    if index_url:
+    # Get the index URL for documents
+    try:
+        index_url = reverse('wagtaildocs:index')
         urls.append(('wagtail.Document', 'index', f"{base_url}{index_url}"))
-    add_url = get_document_add_url()
-    if add_url:
+    except NoReverseMatch:
+        pass
+    # Get the add URL for documents
+    try:
+        add_url = reverse('wagtaildocs:add')
         urls.append(('wagtail.Document', 'add', f"{base_url}{add_url}"))
+    except NoReverseMatch:
+        pass
     Document = get_document_model()
     try:
         documents = Document.objects.all()[:max_instances]
         for document in documents:
             document_model_name = f"wagtail.Document_{document.id}_{document.title}"
-            edit_url = get_document_edit_url(document.id)
-            if edit_url:
+            # Get the edit URL for a document
+            try:
+                edit_url = reverse('wagtaildocs:edit', args=[document.id])
                 urls.append((document_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_document_delete_url(document.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Get the delete URL for a document
+            try:
+                delete_url = reverse('wagtaildocs:delete', args=[document.id])
                 urls.append((document_model_name, 'delete', f"{base_url}{delete_url}"))
+            except NoReverseMatch:
+                pass
     except Document.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):

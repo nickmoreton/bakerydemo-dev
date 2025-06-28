@@ -8,83 +8,49 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Site
 
 
-def get_site_index_url():
-    # Get the index URL for sites
-    try:
-        return reverse('wagtailsites:index')
-    except NoReverseMatch:
-        return None
-
-def get_site_add_url():
-    # Get the add URL for sites
-    try:
-        return reverse('wagtailsites:add')
-    except NoReverseMatch:
-        return None
-
-def get_site_edit_url(site_id):
-    # Get the edit URL for a site
-    try:
-        return reverse('wagtailsites:edit', args=[site_id])
-    except NoReverseMatch:
-        return None
-
-def get_site_delete_url(site_id):
-    # Get the delete URL for a site
-    try:
-        return reverse('wagtailsites:delete', args=[site_id])
-    except NoReverseMatch:
-        return None
-
-def get_site_frontend_url(site):
-    # Get the frontend URL for a site instance
-    if not site:
-        return None
-    
-    # Build the frontend URL from site hostname and port
-    protocol = "https" if site.port == 443 else "http"
-    if site.port in [80, 443]:
-        return f"{protocol}://{site.hostname}/"
-    else:
-        return f"{protocol}://{site.hostname}:{site.port}/"
 
 def get_site_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for sites
     urls = []
     
     # Add index and add URLs
-    index_url = get_site_index_url()
-    if index_url:
+    try:
+        index_url = reverse('wagtailsites:index')
         urls.append(('wagtail.Site', 'index', f"{base_url}{index_url}"))
-    
-    add_url = get_site_add_url()
-    if add_url:
+    except NoReverseMatch:
+        pass
+    try:
+        add_url = reverse('wagtailsites:add')
         urls.append(('wagtail.Site', 'add', f"{base_url}{add_url}"))
-    
+    except NoReverseMatch:
+        pass
     try:
         sites = Site.objects.all()[:max_instances] if max_instances else Site.objects.all()
         for site in sites:
             site_model_name = f"wagtail.Site_{site.id}_{site.hostname}"
-            
             # Admin URLs
-            edit_url = get_site_edit_url(site.id)
-            if edit_url:
+            try:
+                edit_url = reverse('wagtailsites:edit', args=[site.id])
                 urls.append((site_model_name, 'edit', f"{base_url}{edit_url}"))
-            
-            delete_url = get_site_delete_url(site.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            try:
+                delete_url = reverse('wagtailsites:delete', args=[site.id])
                 urls.append((site_model_name, 'delete', f"{base_url}{delete_url}"))
-            
+            except NoReverseMatch:
+                pass
             # Frontend URL (actual site URL)
-            frontend_url = get_site_frontend_url(site)
+            protocol = "https" if site.port == 443 else "http"
+            if site.port in [80, 443]:
+                frontend_url = f"{protocol}://{site.hostname}/"
+            else:
+                frontend_url = f"{protocol}://{site.hostname}:{site.port}/"
             if frontend_url:
                 urls.append((site_model_name, 'frontend', frontend_url))
-                
     except Site.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):
         pass
-    
     return urls
 
 

@@ -110,57 +110,59 @@ def get_generic_models():
 def get_generic_urls(base_url, max_instances=1):
     # Return a list of tuples (model_name, url_type, url) for generic models
     urls = []
-    
-    # Get all generic models from settings
     generic_models = get_generic_models()
-    
     for model in generic_models:
         model_name = f"{model._meta.app_label}.{model.__name__}"
-        
-        # Get add URL for the model
-        add_url = get_add_url(model)
-        if add_url:
+        # Add URL
+        try:
+            add_url = reverse(f"{model._meta.model_name}:add")
             urls.append((model_name, "add", f"{base_url}{add_url}"))
-        
-        # Get list URL for the model
-        list_url = get_list_url(model)
-        if list_url:
+        except NoReverseMatch:
+            pass
+        # List URL
+        try:
+            list_url = reverse(f"{model._meta.model_name}:index")
             urls.append((model_name, "list", f"{base_url}{list_url}"))
-        
-        # Get existing instances and create URLs for them
+        except NoReverseMatch:
+            pass
+        # Instances
         try:
             instances = model.objects.all()
             if max_instances:
                 instances = instances[:max_instances]
         except (model.DoesNotExist, AttributeError, ValueError, TypeError):
             continue
-        
         for instance in instances:
-            # Get edit URL
-            edit_url = get_edit_url(instance)
-            if edit_url:
+            # Edit URL
+            try:
+                edit_url = reverse(f"{model._meta.model_name}:edit", args=[instance.pk])
                 urls.append((model_name, "edit", f"{base_url}{edit_url}"))
-            
-            # Get delete URL
-            delete_url = get_delete_url(instance)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Delete URL
+            try:
+                delete_url = reverse(f"{model._meta.model_name}:delete", args=[instance.pk])
                 urls.append((model_name, "delete", f"{base_url}{delete_url}"))
-            
-            # Get copy URL
-            copy_url = get_copy_url(instance)
-            if copy_url:
+            except NoReverseMatch:
+                pass
+            # Copy URL
+            try:
+                copy_url = reverse(f"{model._meta.model_name}:copy", args=[instance.pk])
                 urls.append((model_name, "copy", f"{base_url}{copy_url}"))
-            
-            # Get history URL
-            history_url = get_history_url(instance)
-            if history_url:
+            except NoReverseMatch:
+                pass
+            # History URL
+            try:
+                history_url = reverse(f"{model._meta.model_name}:history", args=[instance.pk])
                 urls.append((model_name, "history", f"{base_url}{history_url}"))
-            
-            # Get usage URL
-            usage_url = get_usage_url(instance)
-            if usage_url:
+            except NoReverseMatch:
+                pass
+            # Usage URL
+            try:
+                usage_url = reverse(f"{model._meta.model_name}:usage", args=[instance.pk])
                 urls.append((model_name, "usage", f"{base_url}{usage_url}"))
-                
+            except NoReverseMatch:
+                pass
     return urls
 
 

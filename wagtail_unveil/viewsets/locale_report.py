@@ -8,51 +8,34 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Locale
 
 
-def get_locale_index_url():
-    # Get the index URL for locales
-    try:
-        return reverse('wagtaillocales:index')
-    except NoReverseMatch:
-        return None
-
-
-# wagtaillocales:add This path doesn't exist for this model
-
-def get_locale_edit_url(locale_id):
-    # Get the edit URL for a locale
-    try:
-        return reverse('wagtaillocales:edit', args=[locale_id])
-    except NoReverseMatch:
-        return None
-
-
-def get_locale_delete_url(locale_id):
-    # Get the delete URL for a locale
-    try:
-        return reverse('wagtaillocales:delete', args=[locale_id])
-    except NoReverseMatch:
-        return None
-
-
 def get_locale_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for locales
     urls = []
-    index_url = get_locale_index_url()
-    if index_url:
+    # Get the index URL for locales
+    try:
+        index_url = reverse('wagtaillocales:index')
         urls.append(('wagtail.Locale', 'index', f"{base_url}{index_url}"))
-    # add_url = get_locale_add_url()
+    except NoReverseMatch:
+        pass
+    # add_url = get_locale_add_url()  # This path doesn't exist for this model
     # if add_url:
     #     urls.append(('wagtail.Locale', 'add', f"{base_url}{add_url}"))
     try:
         locales = Locale.objects.all()[:max_instances]
         for locale in locales:
             locale_model_name = f"wagtail.Locale_{locale.id}_{getattr(locale, 'language_code', getattr(locale, 'code', ''))}"
-            edit_url = get_locale_edit_url(locale.id)
-            if edit_url:
+            # Get the edit URL for a locale
+            try:
+                edit_url = reverse('wagtaillocales:edit', args=[locale.id])
                 urls.append((locale_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_locale_delete_url(locale.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Get the delete URL for a locale
+            try:
+                delete_url = reverse('wagtaillocales:delete', args=[locale.id])
                 urls.append((locale_model_name, 'delete', f"{base_url}{delete_url}"))
+            except NoReverseMatch:
+                pass
     except Locale.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):

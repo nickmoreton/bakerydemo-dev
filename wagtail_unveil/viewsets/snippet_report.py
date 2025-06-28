@@ -8,124 +8,69 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.snippets.models import get_snippet_models
 
 
-def get_snippet_url_pattern_name(model, action):
-    # Get the URL pattern name for a snippet model and action
-    app_label = model._meta.app_label
-    model_name = model._meta.model_name
-    return f"wagtailsnippets_{app_label}_{model_name}:{action}"
 
-def get_snippet_add_url(model):
-    # Get the add URL for a snippet model
-    try:
-        url_pattern = get_snippet_url_pattern_name(model, 'add')
-        return reverse(url_pattern)
-    except NoReverseMatch:
-        return None
-
-def get_snippet_list_url(model):
-    # Get the list URL for a snippet model
-    try:
-        url_pattern = get_snippet_url_pattern_name(model, 'list')
-        return reverse(url_pattern)
-    except NoReverseMatch:
-        return None
-
-def get_snippet_edit_url(instance):
-    # Get the edit URL for a snippet instance
-    try:
-        model = type(instance)
-        url_pattern = get_snippet_url_pattern_name(model, 'edit')
-        return reverse(url_pattern, args=[instance.pk])
-    except NoReverseMatch:
-        return None
-
-def get_snippet_delete_url(instance):
-    # Get the delete URL for a snippet instance
-    try:
-        model = type(instance)
-        url_pattern = get_snippet_url_pattern_name(model, 'delete')
-        return reverse(url_pattern, args=[instance.pk])
-    except NoReverseMatch:
-        return None
-
-def get_snippet_copy_url(instance):
-    # Get the copy URL for a snippet instance
-    try:
-        model = type(instance)
-        url_pattern = get_snippet_url_pattern_name(model, 'copy')
-        return reverse(url_pattern, args=[instance.pk])
-    except NoReverseMatch:
-        return None
-
-def get_snippet_history_url(instance):
-    # Get the history URL for a snippet instance
-    try:
-        model = type(instance)
-        url_pattern = get_snippet_url_pattern_name(model, 'history')
-        return reverse(url_pattern, args=[instance.pk])
-    except NoReverseMatch:
-        return None
-
-def get_snippet_usage_url(instance):
-    # Get the usage URL for a snippet instance
-    try:
-        model = type(instance)
-        url_pattern = get_snippet_url_pattern_name(model, 'usage')
-        return reverse(url_pattern, args=[instance.pk])
-    except NoReverseMatch:
-        return None
 
 def get_snippet_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for snippets
     urls = []
-    
-    # Get all snippet models
     snippet_models = get_snippet_models()
-    
     for model in snippet_models:
         model_name = f"{model._meta.app_label}.{model.__name__}"
-        
         # Add URL
-        add_url = get_snippet_add_url(model)
-        if add_url:
-            urls.append((model_name, 'add', f"{base_url}{add_url}"))
-        
-        # List URL
-        list_url = get_snippet_list_url(model)
-        if list_url:
-            urls.append((model_name, 'list', f"{base_url}{list_url}"))
-        
         try:
-            # Get instances
+            url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:add"
+            add_url = reverse(url_pattern)
+            urls.append((model_name, 'add', f"{base_url}{add_url}"))
+        except NoReverseMatch:
+            pass
+        # List URL
+        try:
+            url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:list"
+            list_url = reverse(url_pattern)
+            urls.append((model_name, 'list', f"{base_url}{list_url}"))
+        except NoReverseMatch:
+            pass
+        try:
             instances = model.objects.all()[:max_instances] if max_instances else model.objects.all()
-            
             for instance in instances:
                 snippet_model_name = f"{model._meta.app_label}.{model.__name__}_{instance.id}_{getattr(instance, 'title', getattr(instance, 'name', str(instance)))}"
-                
-                # Admin URLs
-                edit_url = get_snippet_edit_url(instance)
-                if edit_url:
+                # Edit URL
+                try:
+                    url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:edit"
+                    edit_url = reverse(url_pattern, args=[instance.pk])
                     urls.append((snippet_model_name, 'edit', f"{base_url}{edit_url}"))
-                
-                delete_url = get_snippet_delete_url(instance)
-                if delete_url:
+                except NoReverseMatch:
+                    pass
+                # Delete URL
+                try:
+                    url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:delete"
+                    delete_url = reverse(url_pattern, args=[instance.pk])
                     urls.append((snippet_model_name, 'delete', f"{base_url}{delete_url}"))
-                
-                copy_url = get_snippet_copy_url(instance)
-                if copy_url:
+                except NoReverseMatch:
+                    pass
+                # Copy URL
+                try:
+                    url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:copy"
+                    copy_url = reverse(url_pattern, args=[instance.pk])
                     urls.append((snippet_model_name, 'copy', f"{base_url}{copy_url}"))
-                
-                history_url = get_snippet_history_url(instance)
-                if history_url:
+                except NoReverseMatch:
+                    pass
+                # History URL
+                try:
+                    url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:history"
+                    history_url = reverse(url_pattern, args=[instance.pk])
                     urls.append((snippet_model_name, 'history', f"{base_url}{history_url}"))
-                
-                usage_url = get_snippet_usage_url(instance)
-                if usage_url:
+                except NoReverseMatch:
+                    pass
+                # Usage URL
+                try:
+                    url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:usage"
+                    usage_url = reverse(url_pattern, args=[instance.pk])
                     urls.append((snippet_model_name, 'usage', f"{base_url}{usage_url}"))
-                    
+                except NoReverseMatch:
+                    pass
         except (model.DoesNotExist, AttributeError, ValueError, TypeError):
             pass
-    
     return urls
 
 

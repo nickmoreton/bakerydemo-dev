@@ -8,58 +8,38 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.images import get_image_model
 
 
-def get_image_index_url():
-    # Get the index URL for images
-    try:
-        return reverse('wagtailimages:index')
-    except NoReverseMatch:
-        return None
-
-
-def get_image_add_url():
-    # Get the add URL for images
-    try:
-        return reverse('wagtailimages:add')
-    except NoReverseMatch:
-        return None
-
-
-def get_image_edit_url(image_id):
-    # Get the edit URL for an image
-    try:
-        return reverse('wagtailimages:edit', args=[image_id])
-    except NoReverseMatch:
-        return None
-
-
-def get_image_delete_url(image_id):
-    # Get the delete URL for an image
-    try:
-        return reverse('wagtailimages:delete', args=[image_id])
-    except NoReverseMatch:
-        return None
-
-
 def get_image_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for images
     urls = []
-    index_url = get_image_index_url()
-    if index_url:
+    # Get the index URL for images
+    try:
+        index_url = reverse('wagtailimages:index')
         urls.append(('wagtail.Image', 'index', f"{base_url}{index_url}"))
-    add_url = get_image_add_url()
-    if add_url:
+    except NoReverseMatch:
+        pass
+    # Get the add URL for images
+    try:
+        add_url = reverse('wagtailimages:add')
         urls.append(('wagtail.Image', 'add', f"{base_url}{add_url}"))
+    except NoReverseMatch:
+        pass
     Image = get_image_model()
     try:
         images = Image.objects.all()[:max_instances]
         for image in images:
             image_model_name = f"wagtail.Image_{image.id}_{getattr(image, 'title', getattr(image, 'name', ''))}"
-            edit_url = get_image_edit_url(image.id)
-            if edit_url:
+            # Get the edit URL for an image
+            try:
+                edit_url = reverse('wagtailimages:edit', args=[image.id])
                 urls.append((image_model_name, 'edit', f"{base_url}{edit_url}"))
-            delete_url = get_image_delete_url(image.id)
-            if delete_url:
+            except NoReverseMatch:
+                pass
+            # Get the delete URL for an image
+            try:
+                delete_url = reverse('wagtailimages:delete', args=[image.id])
                 urls.append((image_model_name, 'delete', f"{base_url}{delete_url}"))
+            except NoReverseMatch:
+                pass
     except Image.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):
