@@ -10,7 +10,7 @@ from wagtail.models import Page
 
 
 def get_forms_index_url():
-    """Get the main forms index URL."""
+    # Get the main forms index URL
     try:
         return reverse('wagtailforms:index')
     except NoReverseMatch:
@@ -18,7 +18,7 @@ def get_forms_index_url():
 
 
 def get_form_submissions_list_url(page_id):
-    """Get the submissions list URL for a specific form page."""
+    # Get the submissions list URL for a form page
     if not page_id:
         return None
     try:
@@ -28,7 +28,7 @@ def get_form_submissions_list_url(page_id):
 
 
 def get_form_submissions_delete_url(page_id):
-    """Get the submissions delete URL for a specific form page."""
+    # Get the submissions delete URL for a form page
     if not page_id:
         return None
     try:
@@ -38,18 +38,13 @@ def get_form_submissions_delete_url(page_id):
 
 
 def get_form_pages_with_submissions():
-    """
-    Get all pages that have form submissions.
-    
-    Returns:
-        List of tuples: (page_id, page_title, page_class_name, submission_count)
-    """
+    # Get all pages that have form submissions
     form_pages = []
     
     # Get unique page IDs that have form submissions
     try:
         page_ids_with_submissions = FormSubmission.objects.values_list('page_id', flat=True).distinct()
-    except Exception:
+    except (FormSubmission.DoesNotExist, AttributeError, ValueError, TypeError):
         return form_pages
     
     for page_id in page_ids_with_submissions:
@@ -57,7 +52,6 @@ def get_form_pages_with_submissions():
             page = Page.objects.get(id=page_id)
             specific_page = page.specific
             submission_count = FormSubmission.objects.filter(page_id=page_id).count()
-            
             form_pages.append((
                 page_id,
                 page.title,
@@ -66,23 +60,14 @@ def get_form_pages_with_submissions():
             ))
         except Page.DoesNotExist:
             continue
-        except Exception:
+        except (AttributeError, ValueError, TypeError):
             continue
     
     return form_pages
 
 
 def get_forms_urls(base_url, max_instances=10):
-    """
-    Generate URLs for Wagtail Forms.
-    
-    Args:
-        base_url: Base URL for the site (e.g., "http://localhost:8000")
-        max_instances: Maximum number of form page URLs to generate
-        
-    Returns:
-        List of tuples: (model_name, url_type, url)
-    """
+    # Return a list of tuples (model_name, url_type, url) for forms
     urls = []
     
     # Get the FormSubmission model name
@@ -122,13 +107,14 @@ def get_forms_urls(base_url, max_instances=10):
             frontend_url = page.url
             if frontend_url:
                 urls.append((form_page_model_name, "frontend_form", f"{base_url.rstrip('/')}{frontend_url}"))
-        except Exception:
+        except (Page.DoesNotExist, AttributeError, ValueError, TypeError):
             pass
     
     return urls
 
 
 class UnveilFormReportIndexView(IndexView):
+    # Index view for the Form Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Form "
@@ -146,7 +132,7 @@ class UnveilFormReportIndexView(IndexView):
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
         return all_urls
-
+        # Get the queryset for form URLs
     def get_header_buttons(self):
         return [
             HeaderButton(
@@ -155,14 +141,15 @@ class UnveilFormReportIndexView(IndexView):
                 attrs={"data-action": "check-urls"},
             )
         ]
-
+        # Get header buttons
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["object_list"] = self.get_queryset()
         return context
-
+        # Get context data
 
 class UnveilFormReportViewSet(ViewSet):
+    # ViewSet for Unveil Form reports
     model = None
     icon = "form"
     menu_label = "Form"
@@ -176,6 +163,6 @@ class UnveilFormReportViewSet(ViewSet):
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
         ]
-
+        # Return the URL patterns for this ViewSet
 
 unveil_form_viewset = UnveilFormReportViewSet("unveil_form_report")

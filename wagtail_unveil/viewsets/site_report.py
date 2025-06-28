@@ -9,31 +9,35 @@ from wagtail.models import Site
 
 
 def get_site_index_url():
+    # Get the index URL for sites
     try:
         return reverse('wagtailsites:index')
     except NoReverseMatch:
         return None
 
 def get_site_add_url():
+    # Get the add URL for sites
     try:
         return reverse('wagtailsites:add')
     except NoReverseMatch:
         return None
 
 def get_site_edit_url(site_id):
+    # Get the edit URL for a site
     try:
         return reverse('wagtailsites:edit', args=[site_id])
     except NoReverseMatch:
         return None
 
 def get_site_delete_url(site_id):
+    # Get the delete URL for a site
     try:
         return reverse('wagtailsites:delete', args=[site_id])
     except NoReverseMatch:
         return None
 
 def get_site_frontend_url(site):
-    """Get the frontend URL for a site instance."""
+    # Get the frontend URL for a site instance
     if not site:
         return None
     
@@ -45,7 +49,7 @@ def get_site_frontend_url(site):
         return f"{protocol}://{site.hostname}:{site.port}/"
 
 def get_site_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, full_url) for sites."""
+    # Return a list of tuples (model_name, url_type, full_url) for sites
     urls = []
     
     # Add index and add URLs
@@ -85,9 +89,7 @@ def get_site_urls(base_url, max_instances, user=None):
 
 
 class UnveilSiteReportIndexView(IndexView):
-    """
-    Custom index view for the Site Report ViewSet.
-    """
+    # Index view for the Site Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Site"
@@ -95,7 +97,7 @@ class UnveilSiteReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        """Generate the queryset for site URLs."""
+        # Get the queryset for site URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -111,7 +113,7 @@ class UnveilSiteReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -122,9 +124,7 @@ class UnveilSiteReportIndexView(IndexView):
 
 
 class UnveilSiteReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Site reports using Wagtail's ViewSet pattern.
-    """
+    # ViewSet for Unveil Site reports
     icon = "home"
     menu_label = "Site"
     menu_name = "unveil_site_report"
@@ -133,7 +133,7 @@ class UnveilSiteReportViewSet(ViewSet):
     index_view_class = UnveilSiteReportIndexView
     
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

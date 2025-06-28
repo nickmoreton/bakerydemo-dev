@@ -9,6 +9,7 @@ from wagtail.contrib.search_promotions.models import SearchPromotion
 
 
 def get_search_promotion_index_url():
+    # Get the index URL for search promotions
     try:
         return reverse('wagtailsearchpromotions:index')
     except NoReverseMatch:
@@ -16,6 +17,7 @@ def get_search_promotion_index_url():
 
 
 def get_search_promotion_add_url():
+    # Get the add URL for search promotions
     try:
         return reverse('wagtailsearchpromotions:add')
     except NoReverseMatch:
@@ -23,6 +25,7 @@ def get_search_promotion_add_url():
 
 
 def get_search_promotion_edit_url(promotion_id):
+    # Get the edit URL for a search promotion
     try:
         return reverse('wagtailsearchpromotions:edit', args=[promotion_id])
     except NoReverseMatch:
@@ -30,6 +33,7 @@ def get_search_promotion_edit_url(promotion_id):
 
 
 def get_search_promotion_delete_url(promotion_id):
+    # Get the delete URL for a search promotion
     try:
         return reverse('wagtailsearchpromotions:delete', args=[promotion_id])
     except NoReverseMatch:
@@ -37,7 +41,7 @@ def get_search_promotion_delete_url(promotion_id):
 
 
 def get_search_promotion_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, url) for search promotions."""
+    # Return a list of tuples (model_name, url_type, url) for search promotions
     urls = []
     index_url = get_search_promotion_index_url()
     if index_url:
@@ -63,9 +67,7 @@ def get_search_promotion_urls(base_url, max_instances, user=None):
 
 
 class UnveilSearchPromotionReportIndexView(IndexView):
-    """
-    Custom index view for the Search Promotion Report ViewSet.
-    """
+    # Index view for the Search Promotion Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Search Promotion"
@@ -73,7 +75,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        """Generate the queryset for search promotion URLs."""
+        # Get the queryset for search promotion URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -87,7 +89,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -98,9 +100,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
 
 
 class UnveilSearchPromotionReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Search Promotion reports using Wagtail's ViewSet pattern.
-    """
+    # ViewSet for Unveil Search Promotion reports
     icon = "pick"
     menu_label = "Search Promotion"
     menu_name = "unveil_search_promotion_report"
@@ -109,7 +109,7 @@ class UnveilSearchPromotionReportViewSet(ViewSet):
     index_view_class = UnveilSearchPromotionReportIndexView
 
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

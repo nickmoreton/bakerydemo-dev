@@ -9,31 +9,35 @@ from wagtail.models import Collection
 
 
 def get_collection_index_url():
+    # Get the index URL for collections
     try:
         return reverse('wagtailadmin_collections:index')
     except NoReverseMatch:
         return None
 
 def get_collection_add_url():
+    # Get the add URL for collections
     try:
         return reverse('wagtailadmin_collections:add')
     except NoReverseMatch:
         return None
 
 def get_collection_edit_url(collection_id):
+    # Get the edit URL for a collection
     try:
         return reverse('wagtailadmin_collections:edit', args=[collection_id])
     except NoReverseMatch:
         return None
 
 def get_collection_delete_url(collection_id):
+    # Get the delete URL for a collection
     try:
         return reverse('wagtailadmin_collections:delete', args=[collection_id])
     except NoReverseMatch:
         return None
 
 def get_collection_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, full_url) for collections."""
+    # Return a list of tuples (model_name, url_type, full_url) for collections
     urls = []
     index_url = get_collection_index_url()
     if index_url:
@@ -59,9 +63,7 @@ def get_collection_urls(base_url, max_instances, user=None):
 
 
 class UnveilCollectionReportIndexView(IndexView):
-    """
-    Custom index view for the Collection Report ViewSet.
-    """
+    # Index view for the Collection Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Collection"
@@ -69,7 +71,7 @@ class UnveilCollectionReportIndexView(IndexView):
     paginate_by = None
     
     def get_queryset(self):
-        """Generate the queryset for collection URLs."""
+        # Get the queryset for collection URLs
         
         # Create a named tuple to represent URL entries
         UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
@@ -97,7 +99,7 @@ class UnveilCollectionReportIndexView(IndexView):
         return all_urls
         
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -110,12 +112,7 @@ class UnveilCollectionReportIndexView(IndexView):
 
 
 class UnveilCollectionReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Collection reports using Wagtail's ViewSet pattern.
-    
-    This provides an alternative to the ReportView-based implementation,
-    offering more flexibility and better integration with Wagtail's admin interface.
-    """
+    # ViewSet for Unveil Collection reports
     icon = "folder-open-1"
     menu_label = "Collection"
     menu_name = "unveil_collection_report"
@@ -124,7 +121,7 @@ class UnveilCollectionReportViewSet(ViewSet):
     index_view_class = UnveilCollectionReportIndexView
     
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

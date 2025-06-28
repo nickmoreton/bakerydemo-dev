@@ -9,7 +9,7 @@ from wagtail.admin.widgets.button import HeaderButton
 
 
 def get_add_url(model):
-    """Get the add URL for creating a new instance of the given model type."""
+    # Get the add URL for a model
     if not model:
         return None
     try:
@@ -20,7 +20,7 @@ def get_add_url(model):
 
 
 def get_list_url(model):
-    """Get the list URL for the given model."""
+    # Get the list URL for a model
     if not model:
         return None
     try:
@@ -31,7 +31,7 @@ def get_list_url(model):
 
 
 def get_edit_url(instance):
-    """Get the edit URL for the given instance."""
+    # Get the edit URL for an instance
     if not instance:
         return None
     try:
@@ -43,7 +43,7 @@ def get_edit_url(instance):
 
 
 def get_delete_url(instance):
-    """Get the delete URL for the given instance."""
+    # Get the delete URL for an instance
     if not instance:
         return None
     try:
@@ -55,7 +55,7 @@ def get_delete_url(instance):
 
 
 def get_copy_url(instance):
-    """Get the copy URL for the given instance."""
+    # Get the copy URL for an instance
     if not instance:
         return None
     try:
@@ -67,7 +67,7 @@ def get_copy_url(instance):
 
 
 def get_history_url(instance):
-    """Get the history URL for the given instance."""
+    # Get the history URL for an instance
     if not instance:
         return None
     try:
@@ -79,7 +79,7 @@ def get_history_url(instance):
 
 
 def get_usage_url(instance):
-    """Get the usage URL for the given instance."""
+    # Get the usage URL for an instance
     if not instance:
         return None
     try:
@@ -91,13 +91,7 @@ def get_usage_url(instance):
 
 
 def get_generic_models():
-    """
-    Get all models that should be included in the generic report.
-    This reads from Django settings to get the list of models to include.
-    
-    Returns:
-        List of model classes
-    """
+    # Get all models for the generic report
     # Get the list of models from settings
     generic_models_list = getattr(settings, 'WAGTAIL_UNVEIL_GENERIC_MODELS', [])
     
@@ -114,16 +108,7 @@ def get_generic_models():
 
 
 def get_generic_urls(base_url, max_instances=1):
-    """
-    Generate URLs for all generic models.
-    
-    Args:
-        base_url: Base URL for the site (e.g., "http://localhost:8000")
-        max_instances: Maximum number of instance URLs to generate per model
-        
-    Returns:
-        List of tuples: (model_name, url_type, url)
-    """
+    # Return a list of tuples (model_name, url_type, url) for generic models
     urls = []
     
     # Get all generic models from settings
@@ -147,7 +132,7 @@ def get_generic_urls(base_url, max_instances=1):
             instances = model.objects.all()
             if max_instances:
                 instances = instances[:max_instances]
-        except Exception:
+        except (model.DoesNotExist, AttributeError, ValueError, TypeError):
             continue
         
         for instance in instances:
@@ -180,6 +165,7 @@ def get_generic_urls(base_url, max_instances=1):
 
 
 class UnveilGenericReportIndexView(IndexView):
+    # Index view for the Generic Model Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Generic Model "
@@ -197,7 +183,7 @@ class UnveilGenericReportIndexView(IndexView):
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
         return all_urls
-
+        # Get the queryset for generic model URLs
     def get_header_buttons(self):
         return [
             HeaderButton(
@@ -206,14 +192,15 @@ class UnveilGenericReportIndexView(IndexView):
                 attrs={"data-action": "check-urls"},
             )
         ]
-
+        # Get header buttons
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["object_list"] = self.get_queryset()
         return context
-
+        # Get context data
 
 class UnveilGenericReportViewSet(ViewSet):
+    # ViewSet for Unveil Generic Model reports
     model = None
     icon = "table"
     menu_label = "Generic Model"
@@ -227,6 +214,6 @@ class UnveilGenericReportViewSet(ViewSet):
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
         ]
-
+        # Return the URL patterns for this ViewSet
 
 unveil_generic_viewset = UnveilGenericReportViewSet("unveil_generic_report")

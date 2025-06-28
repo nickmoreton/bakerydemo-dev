@@ -9,6 +9,7 @@ from wagtail.images import get_image_model
 
 
 def get_image_index_url():
+    # Get the index URL for images
     try:
         return reverse('wagtailimages:index')
     except NoReverseMatch:
@@ -16,6 +17,7 @@ def get_image_index_url():
 
 
 def get_image_add_url():
+    # Get the add URL for images
     try:
         return reverse('wagtailimages:add')
     except NoReverseMatch:
@@ -23,6 +25,7 @@ def get_image_add_url():
 
 
 def get_image_edit_url(image_id):
+    # Get the edit URL for an image
     try:
         return reverse('wagtailimages:edit', args=[image_id])
     except NoReverseMatch:
@@ -30,6 +33,7 @@ def get_image_edit_url(image_id):
 
 
 def get_image_delete_url(image_id):
+    # Get the delete URL for an image
     try:
         return reverse('wagtailimages:delete', args=[image_id])
     except NoReverseMatch:
@@ -37,7 +41,7 @@ def get_image_delete_url(image_id):
 
 
 def get_image_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, url) for images."""
+    # Return a list of tuples (model_name, url_type, url) for images
     urls = []
     index_url = get_image_index_url()
     if index_url:
@@ -64,6 +68,7 @@ def get_image_urls(base_url, max_instances, user=None):
 
 
 class UnveilImageReportIndexView(IndexView):
+    # Index view for the Image Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Image "
@@ -71,6 +76,7 @@ class UnveilImageReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
+        # Get the queryset for image URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -84,6 +90,7 @@ class UnveilImageReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -93,12 +100,14 @@ class UnveilImageReportIndexView(IndexView):
         ]
 
     def get_context_data(self, **kwargs):
+        # Get context data
         context = super().get_context_data(**kwargs)
         context["object_list"] = self.get_queryset()
         return context
 
 
 class UnveilImageReportViewSet(ViewSet):
+    # ViewSet for Unveil Image reports
     icon = "image"
     menu_label = "Image"
     menu_name = "unveil_image_report"
@@ -107,6 +116,7 @@ class UnveilImageReportViewSet(ViewSet):
     index_view_class = UnveilImageReportIndexView
 
     def get_urlpatterns(self):
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

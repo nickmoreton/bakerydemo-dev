@@ -9,13 +9,13 @@ from wagtail.snippets.models import get_snippet_models
 
 
 def get_snippet_url_pattern_name(model, action):
-    """Generate the correct URL pattern name for a snippet model and action."""
+    # Get the URL pattern name for a snippet model and action
     app_label = model._meta.app_label
     model_name = model._meta.model_name
     return f"wagtailsnippets_{app_label}_{model_name}:{action}"
 
 def get_snippet_add_url(model):
-    """Get the add URL for creating a new snippet of the given model type."""
+    # Get the add URL for a snippet model
     try:
         url_pattern = get_snippet_url_pattern_name(model, 'add')
         return reverse(url_pattern)
@@ -23,7 +23,7 @@ def get_snippet_add_url(model):
         return None
 
 def get_snippet_list_url(model):
-    """Get the list URL for the given snippet model."""
+    # Get the list URL for a snippet model
     try:
         url_pattern = get_snippet_url_pattern_name(model, 'list')
         return reverse(url_pattern)
@@ -31,7 +31,7 @@ def get_snippet_list_url(model):
         return None
 
 def get_snippet_edit_url(instance):
-    """Get the edit URL for a snippet instance."""
+    # Get the edit URL for a snippet instance
     try:
         model = type(instance)
         url_pattern = get_snippet_url_pattern_name(model, 'edit')
@@ -40,7 +40,7 @@ def get_snippet_edit_url(instance):
         return None
 
 def get_snippet_delete_url(instance):
-    """Get the delete URL for a snippet instance."""
+    # Get the delete URL for a snippet instance
     try:
         model = type(instance)
         url_pattern = get_snippet_url_pattern_name(model, 'delete')
@@ -49,7 +49,7 @@ def get_snippet_delete_url(instance):
         return None
 
 def get_snippet_copy_url(instance):
-    """Get the copy URL for a snippet instance."""
+    # Get the copy URL for a snippet instance
     try:
         model = type(instance)
         url_pattern = get_snippet_url_pattern_name(model, 'copy')
@@ -58,7 +58,7 @@ def get_snippet_copy_url(instance):
         return None
 
 def get_snippet_history_url(instance):
-    """Get the history URL for a snippet instance."""
+    # Get the history URL for a snippet instance
     try:
         model = type(instance)
         url_pattern = get_snippet_url_pattern_name(model, 'history')
@@ -67,7 +67,7 @@ def get_snippet_history_url(instance):
         return None
 
 def get_snippet_usage_url(instance):
-    """Get the usage URL for a snippet instance."""
+    # Get the usage URL for a snippet instance
     try:
         model = type(instance)
         url_pattern = get_snippet_url_pattern_name(model, 'usage')
@@ -76,7 +76,7 @@ def get_snippet_usage_url(instance):
         return None
 
 def get_snippet_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, full_url) for snippets."""
+    # Return a list of tuples (model_name, url_type, full_url) for snippets
     urls = []
     
     # Get all snippet models
@@ -130,9 +130,7 @@ def get_snippet_urls(base_url, max_instances, user=None):
 
 
 class UnveilSnippetReportIndexView(IndexView):
-    """
-    Custom index view for the Snippet Report ViewSet.
-    """
+    # Index view for the Snippet Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Snippet"
@@ -140,7 +138,7 @@ class UnveilSnippetReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        """Generate the queryset for snippet URLs."""
+        # Get the queryset for snippet URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -156,7 +154,7 @@ class UnveilSnippetReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -167,9 +165,7 @@ class UnveilSnippetReportIndexView(IndexView):
 
 
 class UnveilSnippetReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Snippet reports using Wagtail's ViewSet pattern.
-    """
+    # ViewSet for Unveil Snippet reports
     icon = "sliders"
     menu_label = "Snippet"
     menu_name = "unveil_snippet_report"
@@ -178,7 +174,7 @@ class UnveilSnippetReportViewSet(ViewSet):
     index_view_class = UnveilSnippetReportIndexView
     
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

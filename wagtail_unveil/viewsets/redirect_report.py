@@ -9,6 +9,7 @@ from wagtail.contrib.redirects.models import Redirect
 
 
 def get_redirect_index_url():
+    # Get the index URL for redirects
     try:
         return reverse('wagtailredirects:index')
     except NoReverseMatch:
@@ -16,6 +17,7 @@ def get_redirect_index_url():
 
 
 def get_redirect_add_url():
+    # Get the add URL for redirects
     try:
         return reverse('wagtailredirects:add')
     except NoReverseMatch:
@@ -23,6 +25,7 @@ def get_redirect_add_url():
 
 
 def get_redirect_edit_url(redirect_id):
+    # Get the edit URL for a redirect
     try:
         return reverse('wagtailredirects:edit', args=[redirect_id])
     except NoReverseMatch:
@@ -30,6 +33,7 @@ def get_redirect_edit_url(redirect_id):
 
 
 def get_redirect_delete_url(redirect_id):
+    # Get the delete URL for a redirect
     try:
         return reverse('wagtailredirects:delete', args=[redirect_id])
     except NoReverseMatch:
@@ -37,7 +41,7 @@ def get_redirect_delete_url(redirect_id):
 
 
 def get_redirect_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, url) for redirects."""
+    # Return a list of tuples (model_name, url_type, url) for redirects
     urls = []
     index_url = get_redirect_index_url()
     if index_url:
@@ -63,9 +67,7 @@ def get_redirect_urls(base_url, max_instances, user=None):
 
 
 class UnveilRedirectReportIndexView(IndexView):
-    """
-    Custom index view for the Redirect Report ViewSet.
-    """
+    # Index view for the Redirect Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Redirect"
@@ -73,7 +75,7 @@ class UnveilRedirectReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
-        """Generate the queryset for redirect URLs."""
+        # Get the queryset for redirect URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -87,7 +89,7 @@ class UnveilRedirectReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -98,9 +100,7 @@ class UnveilRedirectReportIndexView(IndexView):
 
 
 class UnveilRedirectReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Redirect reports using Wagtail's ViewSet pattern.
-    """
+    # ViewSet for Unveil Redirect reports
     icon = "redirect"
     menu_label = "Redirect"
     menu_name = "unveil_redirect_report"
@@ -109,7 +109,7 @@ class UnveilRedirectReportViewSet(ViewSet):
     index_view_class = UnveilRedirectReportIndexView
 
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

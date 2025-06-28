@@ -9,31 +9,35 @@ from wagtail.documents import get_document_model
 
 
 def get_document_index_url():
+    # Get the index URL for documents
     try:
         return reverse('wagtaildocs:index')
     except NoReverseMatch:
         return None
 
 def get_document_add_url():
+    # Get the add URL for documents
     try:
         return reverse('wagtaildocs:add')
     except NoReverseMatch:
         return None
 
 def get_document_edit_url(document_id):
+    # Get the edit URL for a document
     try:
         return reverse('wagtaildocs:edit', args=[document_id])
     except NoReverseMatch:
         return None
 
 def get_document_delete_url(document_id):
+    # Get the delete URL for a document
     try:
         return reverse('wagtaildocs:delete', args=[document_id])
     except NoReverseMatch:
         return None
 
 def get_document_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, full_url) for documents."""
+    # Return a list of tuples (model_name, url_type, full_url) for documents
     urls = []
     index_url = get_document_index_url()
     if index_url:
@@ -60,9 +64,7 @@ def get_document_urls(base_url, max_instances, user=None):
 
 
 class UnveilDocumentReportIndexView(IndexView):
-    """
-    Custom index view for the Document Report ViewSet.
-    """
+    # Index view for the Document Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Document "
@@ -70,7 +72,7 @@ class UnveilDocumentReportIndexView(IndexView):
     paginate_by = None
     
     def get_queryset(self):
-        """Generate the queryset for document URLs."""
+        # Get the queryset for document URLs
         UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
         all_urls = []
         counter = 1
@@ -84,7 +86,7 @@ class UnveilDocumentReportIndexView(IndexView):
         return all_urls
         
     def get_header_buttons(self):
-        """Get buttons to display in the header."""
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -97,9 +99,7 @@ class UnveilDocumentReportIndexView(IndexView):
 
 
 class UnveilDocumentReportViewSet(ViewSet):
-    """
-    ViewSet for Unveil Document reports using Wagtail's ViewSet pattern.
-    """
+    # ViewSet for Unveil Document reports
     icon = "doc-full-inverse"
     menu_label = "Document"
     menu_name = "unveil_document_report"
@@ -108,7 +108,7 @@ class UnveilDocumentReportViewSet(ViewSet):
     index_view_class = UnveilDocumentReportIndexView
     
     def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),

@@ -9,21 +9,17 @@ from wagtail.models import Locale
 
 
 def get_locale_index_url():
+    # Get the index URL for locales
     try:
         return reverse('wagtaillocales:index')
     except NoReverseMatch:
         return None
 
 
-# This path doesn't exist
-# def get_locale_add_url():
-#     try:
-#         return reverse('wagtaillocales:add')
-#     except NoReverseMatch:
-#         return None
-
+# wagtaillocales:add This path doesn't exist for this model
 
 def get_locale_edit_url(locale_id):
+    # Get the edit URL for a locale
     try:
         return reverse('wagtaillocales:edit', args=[locale_id])
     except NoReverseMatch:
@@ -31,6 +27,7 @@ def get_locale_edit_url(locale_id):
 
 
 def get_locale_delete_url(locale_id):
+    # Get the delete URL for a locale
     try:
         return reverse('wagtaillocales:delete', args=[locale_id])
     except NoReverseMatch:
@@ -38,7 +35,7 @@ def get_locale_delete_url(locale_id):
 
 
 def get_locale_urls(base_url, max_instances, user=None):
-    """Return a list of tuples (model_name, url_type, url) for locales."""
+    # Return a list of tuples (model_name, url_type, url) for locales
     urls = []
     index_url = get_locale_index_url()
     if index_url:
@@ -64,6 +61,7 @@ def get_locale_urls(base_url, max_instances, user=None):
 
 
 class UnveilLocaleReportIndexView(IndexView):
+    # Index view for the Locale Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Locale "
@@ -71,6 +69,7 @@ class UnveilLocaleReportIndexView(IndexView):
     paginate_by = None
 
     def get_queryset(self):
+        # Get the queryset for locale URLs
         UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
@@ -84,6 +83,7 @@ class UnveilLocaleReportIndexView(IndexView):
         return all_urls
 
     def get_header_buttons(self):
+        # Get header buttons
         return [
             HeaderButton(
                 label="Run Checks",
@@ -93,12 +93,14 @@ class UnveilLocaleReportIndexView(IndexView):
         ]
 
     def get_context_data(self, **kwargs):
+        # Get context data
         context = super().get_context_data(**kwargs)
         context["object_list"] = self.get_queryset()
         return context
 
 
 class UnveilLocaleReportViewSet(ViewSet):
+    # ViewSet for Unveil Locale reports
     icon = "globe"
     menu_label = "Locale"
     menu_name = "unveil_locale_report"
@@ -107,6 +109,7 @@ class UnveilLocaleReportViewSet(ViewSet):
     index_view_class = UnveilLocaleReportIndexView
 
     def get_urlpatterns(self):
+        # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
