@@ -28,19 +28,19 @@ class UnveilReportsViewSetGroup(ViewSetGroup):
     menu_icon = "tasks"
     menu_order = 1  # Position in the menu
     items = (
-        unveil_collection_viewset,
+        unveil_page_viewset,
+        unveil_image_viewset,
         unveil_document_viewset,
         unveil_form_viewset,
-        unveil_generic_viewset,
-        unveil_image_viewset,
-        unveil_locale_viewset,
-        unveil_page_viewset,
-        unveil_redirect_viewset,
-        unveil_search_promotion_viewset,
-        unveil_settings_viewset,
-        unveil_site_viewset,
         unveil_snippet_viewset,
+        unveil_generic_viewset,
+        unveil_search_promotion_viewset,
+        unveil_collection_viewset,
+        unveil_redirect_viewset,
+        unveil_settings_viewset,
         unveil_user_viewset,
+        unveil_site_viewset,
+        unveil_locale_viewset,
     )
 
 

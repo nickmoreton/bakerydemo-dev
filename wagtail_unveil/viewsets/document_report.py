@@ -66,7 +66,7 @@ class UnveilDocumentReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Document "
-    header_icon = "doc-full" 
+    header_icon = "doc-full-inverse" 
     paginate_by = None
     
     def get_queryset(self):
@@ -100,7 +100,7 @@ class UnveilDocumentReportViewSet(ViewSet):
     """
     ViewSet for Unveil Document reports using Wagtail's ViewSet pattern.
     """
-    icon = "doc-full"
+    icon = "doc-full-inverse"
     menu_label = "Document"
     menu_name = "unveil_document_report"
     url_namespace = "unveil_document_report"

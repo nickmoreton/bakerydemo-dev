@@ -69,7 +69,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Search Promotion"
-    header_icon = "search"
+    header_icon = "pick"
     paginate_by = None
 
     def get_queryset(self):
@@ -101,7 +101,7 @@ class UnveilSearchPromotionReportViewSet(ViewSet):
     """
     ViewSet for Unveil Search Promotion reports using Wagtail's ViewSet pattern.
     """
-    icon = "search"
+    icon = "pick"
     menu_label = "Search Promotion"
     menu_name = "unveil_search_promotion_report"
     url_namespace = "unveil_search_promotion_report"

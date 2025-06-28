@@ -136,7 +136,7 @@ class UnveilSnippetReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Snippet"
-    header_icon = "tasks"
+    header_icon = "sliders"
     paginate_by = None
 
     def get_queryset(self):
@@ -170,7 +170,7 @@ class UnveilSnippetReportViewSet(ViewSet):
     """
     ViewSet for Unveil Snippet reports using Wagtail's ViewSet pattern.
     """
-    icon = "tasks"
+    icon = "sliders"
     menu_label = "Snippet"
     menu_name = "unveil_snippet_report"
     url_namespace = "unveil_snippet_report"

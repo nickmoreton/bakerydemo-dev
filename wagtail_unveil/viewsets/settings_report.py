@@ -118,7 +118,7 @@ class UnveilSettingsReportViewSet(ViewSet):
     """
     ViewSet for Unveil Settings reports using Wagtail's ViewSet pattern.
     """
-    icon = "cog"
+    icon = "cogs"
     menu_label = "Settings"
     menu_name = "unveil_settings_report"
     url_namespace = "unveil_settings_report"

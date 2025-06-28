@@ -67,7 +67,7 @@ class UnveilImageReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Image "
-    header_icon = "tasks"
+    header_icon = "image"
     paginate_by = None
 
     def get_queryset(self):
@@ -99,7 +99,7 @@ class UnveilImageReportIndexView(IndexView):
 
 
 class UnveilImageReportViewSet(ViewSet):
-    icon = "tasks"
+    icon = "image"
     menu_label = "Image"
     menu_name = "unveil_image_report"
     url_namespace = "unveil_image_report"

@@ -91,7 +91,7 @@ class UnveilSiteReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Site"
-    header_icon = "tasks"
+    header_icon = "home"
     paginate_by = None
 
     def get_queryset(self):
@@ -125,7 +125,7 @@ class UnveilSiteReportViewSet(ViewSet):
     """
     ViewSet for Unveil Site reports using Wagtail's ViewSet pattern.
     """
-    icon = "tasks"
+    icon = "home"
     menu_label = "Site"
     menu_name = "unveil_site_report"
     url_namespace = "unveil_site_report"

@@ -183,7 +183,7 @@ class UnveilGenericReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Generic Model "
-    header_icon = "cogs"
+    header_icon = "table"
     paginate_by = None
 
     def get_queryset(self):
@@ -215,7 +215,7 @@ class UnveilGenericReportIndexView(IndexView):
 
 class UnveilGenericReportViewSet(ViewSet):
     model = None
-    icon = "cogs"
+    icon = "table"
     menu_label = "Generic Model"
     menu_name = "unveil_generic_report"
     url_namespace = "unveil_generic_report"
