@@ -70,7 +70,7 @@ class UnveilCollectionReportIndexView(IndexView):
         # Get URLs from different sources using helper functions
         # Get max_instances from settings with a default of 20 (collections are typically moderate in number)
         max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
-        base_url = "http://localhost:8000"  # Default base URL
+        base_url = getattr(settings, "WAGTAIL_UNVEIL_BASE_URL", "http://localhost:8000")
         
         # Collect collection URLs
         collection_urls = get_collection_urls(base_url, max_instances)

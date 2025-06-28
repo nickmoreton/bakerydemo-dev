@@ -93,7 +93,7 @@ class UnveilSettingsReportIndexView(IndexView):
         # For settings, we don't limit max_instances since there are typically very few
         # settings models and we want to include all of them (both generic and site-specific)
         max_instances = None  # No limit for settings
-        base_url = "http://localhost:8000"
+        base_url = getattr(settings, "WAGTAIL_UNVEIL_BASE_URL", "http://localhost:8000")
         settings_urls = get_settings_urls(base_url, max_instances)
         for model_name, url_type, url in settings_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))

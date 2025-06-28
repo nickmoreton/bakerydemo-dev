@@ -106,7 +106,7 @@ class UnveilFormReportIndexView(IndexView):
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
-        base_url = "http://localhost:8000"
+        base_url = getattr(settings, "WAGTAIL_UNVEIL_BASE_URL", "http://localhost:8000")
         form_urls = get_forms_urls(base_url, max_instances)
         for model_name, url_type, url in form_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
