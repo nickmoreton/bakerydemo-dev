@@ -48,7 +48,7 @@ def get_site_frontend_url(site):
     else:
         return f"{protocol}://{site.hostname}:{site.port}/"
 
-def get_site_urls(base_url, max_instances, user=None):
+def get_site_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for sites
     urls = []
     
@@ -103,9 +103,7 @@ class UnveilSiteReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        
-        site_urls = get_site_urls(base_url, max_instances, user)
+        site_urls = get_site_urls(base_url, max_instances)
         for model_name, url_type, url in site_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

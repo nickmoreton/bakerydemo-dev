@@ -36,7 +36,7 @@ def get_collection_delete_url(collection_id):
     except NoReverseMatch:
         return None
 
-def get_collection_urls(base_url, max_instances, user=None):
+def get_collection_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for collections
     urls = []
     index_url = get_collection_index_url()
@@ -87,11 +87,8 @@ class UnveilCollectionReportIndexView(IndexView):
         max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"  # Default base URL
         
-        # Get current user from request
-        user = self.request.user if self.request else None
-        
         # Collect collection URLs
-        collection_urls = get_collection_urls(base_url, max_instances, user)
+        collection_urls = get_collection_urls(base_url, max_instances)
         for model_name, url_type, url in collection_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

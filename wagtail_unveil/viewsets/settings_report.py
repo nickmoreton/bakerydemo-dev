@@ -20,7 +20,7 @@ def get_settings_edit_url(app_label, model_name, site_pk=None):
         return None
 
 
-def get_settings_urls(base_url, max_instances, user=None):
+def get_settings_urls(base_url, max_instances):
     """Return a list of tuples (model_name, url_type, full_url) for settings."""
     urls = []
     
@@ -94,9 +94,7 @@ class UnveilSettingsReportIndexView(IndexView):
         # settings models and we want to include all of them (both generic and site-specific)
         max_instances = None  # No limit for settings
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        
-        settings_urls = get_settings_urls(base_url, max_instances, user)
+        settings_urls = get_settings_urls(base_url, max_instances)
         for model_name, url_type, url in settings_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

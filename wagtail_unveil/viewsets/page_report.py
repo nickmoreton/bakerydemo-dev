@@ -64,7 +64,7 @@ def get_page_index_url(page_id):
     except NoReverseMatch:
         return None
 
-def get_page_urls(base_url, max_instances, user=None):
+def get_page_urls(base_url, max_instances):
     """Return a list of tuples (model_name, url_type, full_url) for pages."""
     urls = []
     
@@ -162,9 +162,7 @@ class UnveilPageReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        
-        page_urls = get_page_urls(base_url, max_instances, user)
+        page_urls = get_page_urls(base_url, max_instances)
         for model_name, url_type, url in page_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

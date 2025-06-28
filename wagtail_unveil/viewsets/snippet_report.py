@@ -75,7 +75,7 @@ def get_snippet_usage_url(instance):
     except NoReverseMatch:
         return None
 
-def get_snippet_urls(base_url, max_instances, user=None):
+def get_snippet_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for snippets
     urls = []
     
@@ -144,9 +144,7 @@ class UnveilSnippetReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        
-        snippet_urls = get_snippet_urls(base_url, max_instances, user)
+        snippet_urls = get_snippet_urls(base_url, max_instances)
         for model_name, url_type, url in snippet_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

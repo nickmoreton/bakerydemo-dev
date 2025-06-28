@@ -36,7 +36,7 @@ def get_document_delete_url(document_id):
     except NoReverseMatch:
         return None
 
-def get_document_urls(base_url, max_instances, user=None):
+def get_document_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for documents
     urls = []
     index_url = get_document_index_url()
@@ -78,8 +78,7 @@ class UnveilDocumentReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        document_urls = get_document_urls(base_url, max_instances, user)
+        document_urls = get_document_urls(base_url, max_instances)
         for model_name, url_type, url in document_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

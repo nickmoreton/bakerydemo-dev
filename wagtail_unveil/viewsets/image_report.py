@@ -40,7 +40,7 @@ def get_image_delete_url(image_id):
         return None
 
 
-def get_image_urls(base_url, max_instances, user=None):
+def get_image_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for images
     urls = []
     index_url = get_image_index_url()
@@ -82,8 +82,7 @@ class UnveilImageReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        image_urls = get_image_urls(base_url, max_instances, user)
+        image_urls = get_image_urls(base_url, max_instances)
         for model_name, url_type, url in image_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

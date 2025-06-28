@@ -40,7 +40,7 @@ def get_search_promotion_delete_url(promotion_id):
         return None
 
 
-def get_search_promotion_urls(base_url, max_instances, user=None):
+def get_search_promotion_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for search promotions
     urls = []
     index_url = get_search_promotion_index_url()
@@ -81,8 +81,7 @@ class UnveilSearchPromotionReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        promo_urls = get_search_promotion_urls(base_url, max_instances, user)
+        promo_urls = get_search_promotion_urls(base_url, max_instances)
         for model_name, url_type, url in promo_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1

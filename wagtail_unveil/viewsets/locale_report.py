@@ -34,7 +34,7 @@ def get_locale_delete_url(locale_id):
         return None
 
 
-def get_locale_urls(base_url, max_instances, user=None):
+def get_locale_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for locales
     urls = []
     index_url = get_locale_index_url()
@@ -75,8 +75,7 @@ class UnveilLocaleReportIndexView(IndexView):
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
         base_url = "http://localhost:8000"
-        user = self.request.user if self.request else None
-        locale_urls = get_locale_urls(base_url, max_instances, user)
+        locale_urls = get_locale_urls(base_url, max_instances)
         for model_name, url_type, url in locale_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
