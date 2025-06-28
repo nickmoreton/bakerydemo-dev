@@ -1,6 +1,7 @@
-from collections import namedtuple
 
+from collections import namedtuple
 from django.conf import settings
+from django.http import JsonResponse, HttpResponseForbidden
 from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.views.generic import IndexView
 from wagtail.admin.viewsets.base import ViewSet
@@ -90,7 +91,7 @@ class UnveilCollectionReportIndexView(IndexView):
                 },
             ),
         ]
-
+ 
 
 class UnveilCollectionReportViewSet(ViewSet):
     # ViewSet for Unveil Collection reports
@@ -100,12 +101,33 @@ class UnveilCollectionReportViewSet(ViewSet):
     url_namespace = "unveil_collection_report"
     url_prefix = "unveil/collection-report"
     index_view_class = UnveilCollectionReportIndexView
-    
+
+    def as_json_view(self, request):
+        # Require a token in the query string or header
+        required_token = getattr(settings, 'WAGTAIL_UNVEIL_JSON_TOKEN', None)
+        token = request.GET.get('token') or request.headers.get('X-API-TOKEN')
+        if not required_token or token != required_token:
+            return HttpResponseForbidden("Invalid or missing token.")
+        # Return the collection report as JSON
+        view = self.index_view_class()
+        queryset = view.get_queryset()
+        data = [
+            {
+                "id": entry.id,
+                "model_name": entry.model_name,
+                "url_type": entry.url_type,
+                "url": entry.url,
+            }
+            for entry in queryset
+        ]
+        return JsonResponse({"results": data})
+
     def get_urlpatterns(self):
         # Return the URL patterns for this ViewSet
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
+            path("json/", self.as_json_view, name="json"),
         ]
 
 

@@ -271,3 +271,4 @@ WAGTAIL_UNVEIL_MAX_INSTANCES = 1
 # This should be the base URL of your Wagtail site, e.g. "http://localhost:8000" or could be the same as WAGTAIL_ADMIN_BASE_URL
 WAGTAIL_UNVEIL_BASE_URL = "http://localhost:8000"
 
+WAGTAIL_UNVEIL_JSON_TOKEN = "1234"
