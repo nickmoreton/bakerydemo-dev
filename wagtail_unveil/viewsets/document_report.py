@@ -66,7 +66,7 @@ class UnveilDocumentReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Document "
-    header_icon = "doc-full-inverse" 
+    header_icon = "doc-full-inverse"
     paginate_by = None
     
     def get_queryset(self):

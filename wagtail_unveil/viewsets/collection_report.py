@@ -65,7 +65,7 @@ class UnveilCollectionReportIndexView(IndexView):
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Collection"
-    header_icon = "folder-open-1" 
+    header_icon = "folder-open-1"
     paginate_by = None
     
     def get_queryset(self):
@@ -116,7 +116,6 @@ class UnveilCollectionReportViewSet(ViewSet):
     This provides an alternative to the ReportView-based implementation,
     offering more flexibility and better integration with Wagtail's admin interface.
     """
-
     icon = "folder-open-1"
     menu_label = "Collection"
     menu_name = "unveil_collection_report"
