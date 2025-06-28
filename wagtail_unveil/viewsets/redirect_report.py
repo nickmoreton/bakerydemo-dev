@@ -26,7 +26,7 @@ def get_redirect_urls(base_url, max_instances):
     try:
         redirects = Redirect.objects.all()[:max_instances]
         for redirect in redirects:
-            redirect_model_name = f"wagtail.Redirect_{redirect.id}_{getattr(redirect, 'old_path', '')}"
+            redirect_model_name = f"wagtail.Redirect ({getattr(redirect, 'old_path', '')})"
             # Get the edit URL for a redirect
             try:
                 edit_url = reverse('wagtailredirects:edit', args=[redirect.id])

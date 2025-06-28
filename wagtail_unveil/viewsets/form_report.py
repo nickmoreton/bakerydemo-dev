@@ -40,7 +40,7 @@ def get_form_pages_with_submissions():
     return form_pages
 
 
-def get_forms_urls(base_url, max_instances=10):
+def get_forms_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for forms
     urls = []
     
@@ -65,7 +65,7 @@ def get_forms_urls(base_url, max_instances=10):
 
     for page_id, page_title, page_class_name, submission_count in limited_form_pages:
         # Create a model identifier that includes the page info
-        form_page_model_name = f"{form_submission_model_name}_Page_{page_id}"
+        form_page_model_name = f"{form_submission_model_name} ({page_title})"
 
         # Get submissions list URL
         try:

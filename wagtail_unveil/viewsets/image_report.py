@@ -27,7 +27,7 @@ def get_image_urls(base_url, max_instances):
     try:
         images = Image.objects.all()[:max_instances]
         for image in images:
-            image_model_name = f"wagtail.Image_{image.id}_{getattr(image, 'title', getattr(image, 'name', ''))}"
+            image_model_name = f"wagtail.Image ({getattr(image, 'title', getattr(image, 'name', ''))})"
             # Get the edit URL for an image
             try:
                 edit_url = reverse('wagtailimages:edit', args=[image.id])

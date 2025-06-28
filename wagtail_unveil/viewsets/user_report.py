@@ -10,7 +10,7 @@ from wagtail.admin.widgets.button import HeaderButton
 
 
 
-def get_user_urls(base_url, max_instances=5):
+def get_user_urls(base_url, max_instances):
     """
     Generate URLs for Wagtail User and Group models.
     Returns a list of tuples: (model_name, url_type, url)

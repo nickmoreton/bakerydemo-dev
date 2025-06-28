@@ -23,7 +23,7 @@ def get_locale_urls(base_url, max_instances):
     try:
         locales = Locale.objects.all()[:max_instances]
         for locale in locales:
-            locale_model_name = f"wagtail.Locale_{locale.id}_{getattr(locale, 'language_code', getattr(locale, 'code', ''))}"
+            locale_model_name = f"wagtail.Locale ({getattr(locale, 'language_code', getattr(locale, 'code', ''))})"
             # Get the edit URL for a locale
             try:
                 edit_url = reverse('wagtaillocales:edit', args=[locale.id])

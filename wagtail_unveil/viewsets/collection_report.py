@@ -8,7 +8,6 @@ from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Collection
 
 
-
 def get_collection_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, full_url) for collections
     urls = []
@@ -27,7 +26,7 @@ def get_collection_urls(base_url, max_instances):
     try:
         collections = Collection.objects.exclude(depth=1)[:max_instances]
         for collection in collections:
-            collection_model_name = f"wagtail.Collection_{collection.id}_{collection.name}"
+            collection_model_name = f"wagtail.Collection ({collection.name})"
             # Get the edit URL for a collection
             try:
                 edit_url = reverse('wagtailadmin_collections:edit', args=[collection.id])

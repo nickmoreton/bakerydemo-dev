@@ -26,7 +26,7 @@ def get_search_promotion_urls(base_url, max_instances):
     try:
         promotions = SearchPromotion.objects.all()[:max_instances]
         for promotion in promotions:
-            promotion_model_name = f"wagtail.SearchPromotion_{promotion.id}_{getattr(promotion, 'query', '')}"
+            promotion_model_name = f"wagtail.SearchPromotion ({getattr(promotion, 'query', '')})"
             # Get the edit URL for a search promotion
             try:
                 edit_url = reverse('wagtailsearchpromotions:edit', args=[promotion.id])

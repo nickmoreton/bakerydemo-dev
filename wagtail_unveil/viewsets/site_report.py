@@ -27,7 +27,7 @@ def get_site_urls(base_url, max_instances):
     try:
         sites = Site.objects.all()[:max_instances] if max_instances else Site.objects.all()
         for site in sites:
-            site_model_name = f"wagtail.Site_{site.id}_{site.hostname}"
+            site_model_name = f"wagtail.Site ({site.hostname})"
             # Admin URLs
             try:
                 edit_url = reverse('wagtailsites:edit', args=[site.id])

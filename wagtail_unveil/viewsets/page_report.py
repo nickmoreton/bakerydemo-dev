@@ -34,7 +34,7 @@ def get_page_urls(base_url, max_instances):
             else:
                 instances = model.objects.all()[:max_instances] if max_instances else model.objects.all()
             for instance in instances:
-                page_model_name = f"{model._meta.app_label}.{model.__name__}_{instance.id}_{instance.title}"
+                page_model_name = f"{model._meta.app_label}.{model.__name__} ({instance.title})"
                 # Admin URLs
                 for url_type, url_name in [
                     ('edit', 'wagtailadmin_pages:edit'),

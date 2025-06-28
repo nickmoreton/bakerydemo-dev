@@ -47,7 +47,7 @@ def get_settings_urls(base_url, max_instances):
                         instances = instances[:max_instances]
                     
                     for instance in instances:
-                        settings_model_name = f"{app_label}.{model_class.__name__}_Site_{instance.site.id}_Instance_{instance.id}"
+                        settings_model_name = f"{app_label}.{model_class.__name__} (Site Instance)"
                         edit_url = get_settings_edit_url(app_label, model_name, instance.site.id)
                         if edit_url:
                             urls.append((settings_model_name, 'edit', f"{base_url}{edit_url}"))
@@ -61,7 +61,7 @@ def get_settings_urls(base_url, max_instances):
                         instances = instances[:max_instances]
                     
                     for instance in instances:
-                        settings_model_name = f"{app_label}.{model_class.__name__}_Instance_{instance.id}"
+                        settings_model_name = f"{app_label}.{model_class.__name__} (Generic Instance)"
                         edit_url = get_settings_edit_url(app_label, model_name)
                         if edit_url:
                             urls.append((settings_model_name, 'edit', f"{base_url}{edit_url}"))

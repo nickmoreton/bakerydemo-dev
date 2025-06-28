@@ -28,7 +28,7 @@ def get_document_urls(base_url, max_instances):
     try:
         documents = Document.objects.all()[:max_instances]
         for document in documents:
-            document_model_name = f"wagtail.Document_{document.id}_{document.title}"
+            document_model_name = f"wagtail.Document ({document.title})"
             # Get the edit URL for a document
             try:
                 edit_url = reverse('wagtaildocs:edit', args=[document.id])

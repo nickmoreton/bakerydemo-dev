@@ -107,7 +107,7 @@ def get_generic_models():
     return models
 
 
-def get_generic_urls(base_url, max_instances=1):
+def get_generic_urls(base_url, max_instances):
     # Return a list of tuples (model_name, url_type, url) for generic models
     urls = []
     generic_models = get_generic_models()

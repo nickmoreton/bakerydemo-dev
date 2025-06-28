@@ -33,7 +33,7 @@ def get_snippet_urls(base_url, max_instances):
         try:
             instances = model.objects.all()[:max_instances] if max_instances else model.objects.all()
             for instance in instances:
-                snippet_model_name = f"{model._meta.app_label}.{model.__name__}_{instance.id}_{getattr(instance, 'title', getattr(instance, 'name', str(instance)))}"
+                snippet_model_name = f"{model._meta.app_label}.{model.__name__} ({getattr(instance, 'title', getattr(instance, 'name', str(instance)))})"
                 # Edit URL
                 try:
                     url_pattern = f"wagtailsnippets_{model._meta.app_label}_{model._meta.model_name}:edit"
