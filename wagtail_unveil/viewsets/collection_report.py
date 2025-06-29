@@ -4,10 +4,11 @@ from dataclasses import dataclass
 from django.conf import settings
 from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Collection
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView
 
 
 def get_collection_urls(base_url, max_instances):
@@ -48,15 +49,7 @@ def get_collection_urls(base_url, max_instances):
     return urls
 
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
-
-
-class UnveilCollectionReportIndexView(ReportView):
+class UnveilCollectionReportIndexView(UnveilReportView):
     # Index view for the Collection Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -85,18 +78,6 @@ class UnveilCollectionReportIndexView(ReportView):
             counter += 1
             
         return all_urls
-        
-    def get_header_buttons(self):
-        # Get header buttons
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={
-                    "data-action": "check-urls",
-                },
-            ),
-        ]
  
 
 class UnveilCollectionReportViewSet(ViewSet):
