@@ -1,22 +1,22 @@
 {% extends 'wagtailadmin/reports/base_report_results.html' %}
-{% load wagtailadmin_tags static %}
+{% load i18n %}
 
 {% block results %}
     <table class="listing">
         <thead>
             <tr>
-                <th>Inspect</th>
-                <th>Result</th>
-                <th>App.Model</th>
-                <th>View Type</th>
-                <th>Admin / Frontend URL</th>
+                <th>{% trans "Inspect" %}</th>
+                <th>{% trans "Result" %}</th>
+                <th>{% trans "App.Model" %}</th>
+                <th>{% trans "View Type" %}</th>
+                <th>{% trans "Admin / Frontend URL" %}</th>
             </tr>
         </thead>
         <tbody>
             {% for entry in object_list %}
                 <tr data-url="{{ entry.url }}" data-id="{{ entry.id }}" data-check>
                     <td>
-                        <a href="{{ entry.url }}" target="_blank" class="button button-small bicolor button--icon"><span class="icon-wrapper"><svg class="icon icon-link-external icon" aria-hidden="true"><use href="#icon-link-external"></use></svg></span>View</a>
+                        <a href="{{ entry.url }}" target="_blank" class="button button-small bicolor button--icon"><span class="icon-wrapper"><svg class="icon icon-link-external icon" aria-hidden="true"><use href="#icon-link-external"></use></svg></span>{% trans "View" %}</a>
                     </td>
                     <td data-result>
                         <svg class="icon icon-radio-empty w-w-4 w-h-4" aria-hidden="true"><use href="#icon-radio-empty"></use></svg>
@@ -30,8 +30,8 @@
             {% endfor %}
         </tbody>
     </table>
-{% endblock %}
-
+    {% endblock %}
+    
 {% block no_results_message %}
-    <p>No URLs found.</p>
+    <p>{% trans "No URLs found." %}</p>
 {% endblock %}
