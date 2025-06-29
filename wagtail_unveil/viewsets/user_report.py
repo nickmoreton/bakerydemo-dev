@@ -5,7 +5,7 @@ from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.viewsets.base import ViewSet
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_user_urls(base_url, max_instances):
@@ -97,7 +97,7 @@ class UnveilUserReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilUserReportViewSet(ViewSet):
+class UnveilUserReportViewSet(UnveilReportViewSet):
     model = None
     icon = "user"
     menu_label = "User"
@@ -106,11 +106,7 @@ class UnveilUserReportViewSet(ViewSet):
     url_prefix = "unveil/user-report"
     index_view_class = UnveilUserReportIndexView
 
-    def get_urlpatterns(self):
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 unveil_user_viewset = UnveilUserReportViewSet("unveil_user_report")

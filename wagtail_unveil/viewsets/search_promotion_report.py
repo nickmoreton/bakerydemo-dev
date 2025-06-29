@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.contrib.search_promotions.models import SearchPromotion
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_search_promotion_urls(base_url, max_instances):
@@ -66,7 +66,7 @@ class UnveilSearchPromotionReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilSearchPromotionReportViewSet(ViewSet):
+class UnveilSearchPromotionReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Search Promotion reports
     icon = "pick"
     menu_label = "Search Promotion"
@@ -75,12 +75,7 @@ class UnveilSearchPromotionReportViewSet(ViewSet):
     url_prefix = "unveil/search-promotion-report"
     index_view_class = UnveilSearchPromotionReportIndexView
 
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

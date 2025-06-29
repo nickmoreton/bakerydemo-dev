@@ -4,7 +4,7 @@ from django.urls import NoReverseMatch, path, reverse
 from wagtail.admin.viewsets.base import ViewSet
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_generic_models():
@@ -102,7 +102,7 @@ class UnveilGenericReportIndexView(UnveilReportView):
             counter += 1
         return all_urls
 
-class UnveilGenericReportViewSet(ViewSet):
+class UnveilGenericReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Generic Model reports
     model = None
     icon = "table"
@@ -112,11 +112,6 @@ class UnveilGenericReportViewSet(ViewSet):
     url_prefix = "unveil/generic-report"
     index_view_class = UnveilGenericReportIndexView
 
-    def get_urlpatterns(self):
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
-        # Return the URL patterns for this ViewSet
+
 
 unveil_generic_viewset = UnveilGenericReportViewSet("unveil_generic_report")

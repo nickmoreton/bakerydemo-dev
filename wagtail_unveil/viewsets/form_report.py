@@ -5,7 +5,7 @@ from wagtail.contrib.forms.models import FormSubmission
 from wagtail.models import Page
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_form_pages_with_submissions():
@@ -109,7 +109,7 @@ class UnveilFormReportIndexView(UnveilReportView):
             counter += 1
         return all_urls
 
-class UnveilFormReportViewSet(ViewSet):
+class UnveilFormReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Form reports
     model = None
     icon = "form"
@@ -119,11 +119,6 @@ class UnveilFormReportViewSet(ViewSet):
     url_prefix = "unveil/form-report"
     index_view_class = UnveilFormReportIndexView
 
-    def get_urlpatterns(self):
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
-        # Return the URL patterns for this ViewSet
+
 
 unveil_form_viewset = UnveilFormReportViewSet("unveil_form_report")

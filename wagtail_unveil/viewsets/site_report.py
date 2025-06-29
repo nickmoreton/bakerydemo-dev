@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.models import Site
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_site_urls(base_url, max_instances):
@@ -74,7 +74,7 @@ class UnveilSiteReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilSiteReportViewSet(ViewSet):
+class UnveilSiteReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Site reports
     icon = "home"
     menu_label = "Site"
@@ -83,12 +83,7 @@ class UnveilSiteReportViewSet(ViewSet):
     url_prefix = "unveil/site-report"
     index_view_class = UnveilSiteReportIndexView
     
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

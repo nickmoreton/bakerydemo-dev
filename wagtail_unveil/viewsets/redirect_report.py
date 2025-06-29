@@ -1,11 +1,9 @@
-from dataclasses import dataclass
-
 from django.conf import settings
-from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.reports import ReportView
-from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
+from django.urls import NoReverseMatch, reverse
 from wagtail.contrib.redirects.models import Redirect
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_redirect_urls(base_url, max_instances):
@@ -46,15 +44,7 @@ def get_redirect_urls(base_url, max_instances):
     return urls
 
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
-
-
-class UnveilRedirectReportIndexView(ReportView):
+class UnveilRedirectReportIndexView(UnveilReportView):
     # Index view for the Redirect Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -74,18 +64,8 @@ class UnveilRedirectReportIndexView(ReportView):
             counter += 1
         return all_urls
 
-    def get_header_buttons(self):
-        # Get header buttons
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={"data-action": "check-urls"},
-            ),
-        ]
 
-
-class UnveilRedirectReportViewSet(ViewSet):
+class UnveilRedirectReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Redirect reports
     icon = "redirect"
     menu_label = "Redirect"
@@ -93,13 +73,6 @@ class UnveilRedirectReportViewSet(ViewSet):
     url_namespace = "unveil_redirect_report"
     url_prefix = "unveil/redirect-report"
     index_view_class = UnveilRedirectReportIndexView
-
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
 
 
 # Create an instance of the ViewSet to be registered

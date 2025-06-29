@@ -5,7 +5,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.models import Page, get_page_models
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_page_urls(base_url, max_instances):
@@ -92,7 +92,7 @@ class UnveilPageReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilPageReportViewSet(ViewSet):
+class UnveilPageReportViewSet(UnveilReportViewSet):
     """
     ViewSet for Unveil Page reports using Wagtail's ViewSet pattern.
     """
@@ -103,12 +103,7 @@ class UnveilPageReportViewSet(ViewSet):
     url_prefix = "unveil/page-report"
     index_view_class = UnveilPageReportIndexView
     
-    def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

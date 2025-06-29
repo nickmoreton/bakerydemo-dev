@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.snippets.models import get_snippet_models
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_snippet_urls(base_url, max_instances):
@@ -93,7 +93,7 @@ class UnveilSnippetReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilSnippetReportViewSet(ViewSet):
+class UnveilSnippetReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Snippet reports
     icon = "sliders"
     menu_label = "Snippet"
@@ -102,12 +102,7 @@ class UnveilSnippetReportViewSet(ViewSet):
     url_prefix = "unveil/snippet-report"
     index_view_class = UnveilSnippetReportIndexView
     
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

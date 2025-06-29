@@ -1,16 +1,54 @@
+from django.conf import settings
+from django.http import HttpResponseForbidden, JsonResponse
+from django.urls import path
 from wagtail.admin.views.reports import ReportView
+from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
 
 
 class UnveilReportView(ReportView):
+    """Base view class for Unveil reports"""
+    
     def get_header_buttons(self):
-        # Get header buttons
+        """Get header buttons for the report"""
         return [
             HeaderButton(
                 label="Run Checks",
                 icon_name="link",
-                attrs={
-                    "data-action": "check-urls",
-                },
-            ),
+                attrs={"data-action": "check-urls"},
+            )
+        ]
+
+
+class UnveilReportViewSet(ViewSet):
+    """Base ViewSet class for Unveil reports with JSON API support"""
+
+    def as_json_view(self, request):
+        """Return the report data as JSON with token authentication"""
+        # Require a token in the query string or header
+        required_token = getattr(settings, 'WAGTAIL_UNVEIL_JSON_TOKEN', None)
+        token = request.GET.get('token') or request.headers.get('X-API-TOKEN')
+        if not required_token or token != required_token:
+            return HttpResponseForbidden("Invalid or missing token.")
+        
+        # Return the report data as JSON
+        view = self.index_view_class()
+        queryset = view.get_queryset()
+        data = [
+            {
+                "id": entry.id,
+                "model_name": entry.model_name,
+                "url_type": entry.url_type,
+                "url": entry.url,
+            }
+            for entry in queryset
+        ]
+        return JsonResponse({"results": data})
+
+    def get_urlpatterns(self):
+        """Return the URL patterns for this ViewSet including JSON endpoint"""
+        return [
+            path("", self.index_view_class.as_view(), name="index"),
+            path("results/", self.index_view_class.as_view(), name="results"),
+            path("json/", self.as_json_view, name="json"),
         ]

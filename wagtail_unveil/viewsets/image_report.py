@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.images import get_image_model
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_image_urls(base_url, max_instances):
@@ -67,7 +67,7 @@ class UnveilImageReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilImageReportViewSet(ViewSet):
+class UnveilImageReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Image reports
     icon = "image"
     menu_label = "Image"
@@ -76,12 +76,7 @@ class UnveilImageReportViewSet(ViewSet):
     url_prefix = "unveil/image-report"
     index_view_class = UnveilImageReportIndexView
 
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 unveil_image_viewset = UnveilImageReportViewSet("unveil_image_report")

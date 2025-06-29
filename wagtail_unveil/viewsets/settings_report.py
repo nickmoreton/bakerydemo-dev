@@ -5,7 +5,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.contrib.settings.models import BaseGenericSetting, BaseSiteSetting
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_settings_edit_url(app_label, model_name, site_pk=None):
@@ -100,7 +100,7 @@ class UnveilSettingsReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilSettingsReportViewSet(ViewSet):
+class UnveilSettingsReportViewSet(UnveilReportViewSet):
     """
     ViewSet for Unveil Settings reports using Wagtail's ViewSet pattern.
     """
@@ -111,12 +111,7 @@ class UnveilSettingsReportViewSet(ViewSet):
     url_prefix = "unveil/settings-report"
     index_view_class = UnveilSettingsReportIndexView
     
-    def get_urlpatterns(self):
-        """Return the URL patterns for this ViewSet."""
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

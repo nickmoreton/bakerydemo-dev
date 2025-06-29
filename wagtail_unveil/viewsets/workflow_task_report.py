@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.models import Task
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_workflow_task_urls(base_url, max_instances):
@@ -72,7 +72,7 @@ class UnveilWorkflowTaskReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilWorkflowTaskReportViewSet(ViewSet):
+class UnveilWorkflowTaskReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Workflow Task reports
     icon = "thumbtack"
     menu_label = "Workflow Task"
@@ -81,12 +81,7 @@ class UnveilWorkflowTaskReportViewSet(ViewSet):
     url_prefix = "unveil/workflow-task-report"
     index_view_class = UnveilWorkflowTaskReportIndexView
     
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

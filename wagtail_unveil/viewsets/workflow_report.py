@@ -4,7 +4,7 @@ from wagtail.admin.viewsets.base import ViewSet
 from wagtail.models import Workflow
 
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_workflow_urls(base_url, max_instances):
@@ -77,7 +77,7 @@ class UnveilWorkflowReportIndexView(UnveilReportView):
         return all_urls
 
 
-class UnveilWorkflowReportViewSet(ViewSet):
+class UnveilWorkflowReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Workflow reports
     icon = "tasks"
     menu_label = "Workflow"
@@ -86,12 +86,7 @@ class UnveilWorkflowReportViewSet(ViewSet):
     url_prefix = "unveil/workflow-report"
     index_view_class = UnveilWorkflowReportIndexView
     
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
+
 
 
 # Create an instance of the ViewSet to be registered

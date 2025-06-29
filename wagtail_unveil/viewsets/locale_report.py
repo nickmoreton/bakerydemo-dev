@@ -1,12 +1,9 @@
-from dataclasses import dataclass
-
 from django.conf import settings
-from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.generic import IndexView
-from wagtail.admin.views.reports import ReportView
-from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
+from django.urls import NoReverseMatch, reverse
 from wagtail.models import Locale
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_locale_urls(base_url, max_instances):
@@ -43,15 +40,8 @@ def get_locale_urls(base_url, max_instances):
         pass
     return urls
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
 
-
-class UnveilLocaleReportIndexView(ReportView):
+class UnveilLocaleReportIndexView(UnveilReportView):
     # Index view for the Locale Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -71,24 +61,8 @@ class UnveilLocaleReportIndexView(ReportView):
             counter += 1
         return all_urls
 
-    def get_header_buttons(self):
-        # Get header buttons
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={"data-action": "check-urls"},
-            )
-        ]
 
-    def get_context_data(self, **kwargs):
-        # Get context data
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = self.get_queryset()
-        return context
-
-
-class UnveilLocaleReportViewSet(ViewSet):
+class UnveilLocaleReportViewSet(UnveilReportViewSet):
     # ViewSet for Unveil Locale reports
     icon = "globe"
     menu_label = "Locale"
@@ -96,13 +70,6 @@ class UnveilLocaleReportViewSet(ViewSet):
     url_namespace = "unveil_locale_report"
     url_prefix = "unveil/locale-report"
     index_view_class = UnveilLocaleReportIndexView
-
-    def get_urlpatterns(self):
-        # Return the URL patterns for this ViewSet
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
 
 
 unveil_locale_viewset = UnveilLocaleReportViewSet("unveil_locale_report")

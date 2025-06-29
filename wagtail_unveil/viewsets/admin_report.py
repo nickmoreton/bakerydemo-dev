@@ -1,10 +1,7 @@
 from django.conf import settings
-from wagtail.admin.viewsets.base import ViewSet
 
-from wagtail.admin.widgets.button import HeaderButton
-from django.urls import path
 from wagtail_unveil.models import UrlEntry
-from wagtail_unveil.viewsets.base import UnveilReportView
+from wagtail_unveil.viewsets.base import UnveilReportView, UnveilReportViewSet
 
 
 def get_admin_urls(base_url, max_instances):
@@ -55,31 +52,14 @@ class UnveilAdminReportIndexView(UnveilReportView):
             counter += 1
         return all_urls
 
-    def get_header_buttons(self):
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={
-                    "data-action": "check-urls",
-                },
-            ),
-        ]
 
-
-class UnveilAdminReportViewSet(ViewSet):
+class UnveilAdminReportViewSet(UnveilReportViewSet):
     icon = "cog"
     menu_label = "Admin"
     menu_name = "unveil_admin_report"
     url_namespace = "unveil_admin_report"
     url_prefix = "unveil/admin-report"
     index_view_class = UnveilAdminReportIndexView
-
-    def get_urlpatterns(self):
-        return [
-            path("", self.index_view_class.as_view(), name="index"),
-            path("results/", self.index_view_class.as_view(), name="results"),
-        ]
 
 
 # Create an instance of the ViewSet to be registered
