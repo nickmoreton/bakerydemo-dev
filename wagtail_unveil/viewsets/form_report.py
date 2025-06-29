@@ -1,12 +1,11 @@
-from dataclasses import dataclass
-
 from django.conf import settings
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
 from wagtail.contrib.forms.models import FormSubmission
 from wagtail.models import Page
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView
 
 
 def get_form_pages_with_submissions():
@@ -91,15 +90,7 @@ def get_forms_urls(base_url, max_instances):
     return urls
 
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
-
-
-class UnveilFormReportIndexView(ReportView):
+class UnveilFormReportIndexView(UnveilReportView):
     # Index view for the Form Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -117,21 +108,6 @@ class UnveilFormReportIndexView(ReportView):
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
         return all_urls
-        # Get the queryset for form URLs
-    def get_header_buttons(self):
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={"data-action": "check-urls"},
-            )
-        ]
-        # Get header buttons
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["object_list"] = self.get_queryset()
-        return context
-        # Get context data
 
 class UnveilFormReportViewSet(ViewSet):
     # ViewSet for Unveil Form reports

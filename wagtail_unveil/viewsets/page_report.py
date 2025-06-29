@@ -1,12 +1,11 @@
 
-from dataclasses import dataclass
-
 from django.conf import settings
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Page, get_page_models
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView
 
 
 def get_page_urls(base_url, max_instances):
@@ -69,15 +68,7 @@ def get_page_urls(base_url, max_instances):
     return urls
 
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
-
-
-class UnveilPageReportIndexView(ReportView):
+class UnveilPageReportIndexView(UnveilReportView):
     """
     Custom index view for the Page Report ViewSet.
     """
@@ -99,16 +90,6 @@ class UnveilPageReportIndexView(ReportView):
             counter += 1
             
         return all_urls
-
-    def get_header_buttons(self):
-        """Get buttons to display in the header."""
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={"data-action": "check-urls"},
-            )
-        ]
 
 
 class UnveilPageReportViewSet(ViewSet):

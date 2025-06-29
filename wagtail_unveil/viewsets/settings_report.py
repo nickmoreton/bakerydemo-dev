@@ -1,12 +1,11 @@
-from dataclasses import dataclass
-
 from django.apps import apps
 from django.conf import settings
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
-from wagtail.admin.widgets.button import HeaderButton
 from wagtail.contrib.settings.models import BaseGenericSetting, BaseSiteSetting
+
+from wagtail_unveil.models import UrlEntry
+from wagtail_unveil.viewsets.base import UnveilReportView
 
 
 def get_settings_edit_url(app_label, model_name, site_pk=None):
@@ -74,15 +73,7 @@ def get_settings_urls(base_url, max_instances):
     return urls
 
 
-@dataclass
-class UrlEntry:
-    id: int
-    model_name: str
-    url_type: str
-    url: str
-
-
-class UnveilSettingsReportIndexView(ReportView):
+class UnveilSettingsReportIndexView(UnveilReportView):
     """
     Custom index view for the Settings Report ViewSet.
     """
@@ -107,16 +98,6 @@ class UnveilSettingsReportIndexView(ReportView):
             counter += 1
             
         return all_urls
-
-    def get_header_buttons(self):
-        """Get buttons to display in the header."""
-        return [
-            HeaderButton(
-                label="Run Checks",
-                icon_name="link",
-                attrs={"data-action": "check-urls"},
-            )
-        ]
 
 
 class UnveilSettingsReportViewSet(ViewSet):
