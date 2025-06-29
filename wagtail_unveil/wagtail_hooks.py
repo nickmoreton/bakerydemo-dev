@@ -15,6 +15,8 @@ from .viewsets.settings_report import unveil_settings_viewset
 from .viewsets.site_report import unveil_site_viewset
 from .viewsets.snippet_report import unveil_snippet_viewset
 from .viewsets.user_report import unveil_user_viewset
+from .viewsets.workflow_report import unveil_workflow_viewset
+from .viewsets.workflow_task_report import unveil_workflow_task_viewset
 
 
 class UnveilReportsViewSetGroup(ViewSetGroup):
@@ -43,6 +45,8 @@ class UnveilReportsViewSetGroup(ViewSetGroup):
         unveil_site_viewset,
         unveil_locale_viewset,
         unveil_admin_viewset,
+        unveil_workflow_viewset,
+        unveil_workflow_task_viewset,
     )
 
 
