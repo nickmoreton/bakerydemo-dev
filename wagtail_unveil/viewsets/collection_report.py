@@ -1,6 +1,3 @@
-
-from dataclasses import dataclass
-
 from django.conf import settings
 from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import NoReverseMatch, path, reverse

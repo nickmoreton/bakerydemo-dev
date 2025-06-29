@@ -1,6 +1,7 @@
 from wagtail import hooks
 from wagtail.admin.viewsets.base import ViewSetGroup
 
+from .viewsets.admin_report import unveil_admin_viewset
 from .viewsets.collection_report import unveil_collection_viewset
 from .viewsets.document_report import unveil_document_viewset
 from .viewsets.form_report import unveil_form_viewset
@@ -41,6 +42,7 @@ class UnveilReportsViewSetGroup(ViewSetGroup):
         unveil_user_viewset,
         unveil_site_viewset,
         unveil_locale_viewset,
+        unveil_admin_viewset,
     )
 
 
