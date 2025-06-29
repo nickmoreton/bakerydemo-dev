@@ -1,9 +1,10 @@
 
-from collections import namedtuple
+from dataclasses import dataclass
+
 from django.conf import settings
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden, JsonResponse
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.generic import IndexView
+from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Collection
@@ -47,7 +48,15 @@ def get_collection_urls(base_url, max_instances):
     return urls
 
 
-class UnveilCollectionReportIndexView(IndexView):
+@dataclass
+class UrlEntry:
+    id: int
+    model_name: str
+    url_type: str
+    url: str
+
+
+class UnveilCollectionReportIndexView(ReportView):
     # Index view for the Collection Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -57,9 +66,6 @@ class UnveilCollectionReportIndexView(IndexView):
     
     def get_queryset(self):
         # Get the queryset for collection URLs
-        
-        # Create a named tuple to represent URL entries
-        UrlEntry = namedtuple('UrlEntry', ['id', 'model_name', 'url_type', 'url'])
         
         # Collect URLs from different helpers
         all_urls = []

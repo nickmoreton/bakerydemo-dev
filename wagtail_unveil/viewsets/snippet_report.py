@@ -1,13 +1,11 @@
-from collections import namedtuple
+from dataclasses import dataclass
 
 from django.conf import settings
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.generic import IndexView
+from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
 from wagtail.snippets.models import get_snippet_models
-
-
 
 
 def get_snippet_urls(base_url, max_instances):
@@ -74,7 +72,15 @@ def get_snippet_urls(base_url, max_instances):
     return urls
 
 
-class UnveilSnippetReportIndexView(IndexView):
+@dataclass
+class UrlEntry:
+    id: int
+    model_name: str
+    url_type: str
+    url: str
+
+
+class UnveilSnippetReportIndexView(ReportView):
     # Index view for the Snippet Report
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
@@ -84,7 +90,6 @@ class UnveilSnippetReportIndexView(IndexView):
 
     def get_queryset(self):
         # Get the queryset for snippet URLs
-        UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)

@@ -1,12 +1,12 @@
 
-from collections import namedtuple
+from dataclasses import dataclass
+
 from django.conf import settings
 from django.urls import NoReverseMatch, path, reverse
-from wagtail.admin.views.generic import IndexView
+from wagtail.admin.views.reports import ReportView
 from wagtail.admin.viewsets.base import ViewSet
 from wagtail.admin.widgets.button import HeaderButton
 from wagtail.models import Page, get_page_models
-
 
 
 def get_page_urls(base_url, max_instances):
@@ -69,7 +69,15 @@ def get_page_urls(base_url, max_instances):
     return urls
 
 
-class UnveilPageReportIndexView(IndexView):
+@dataclass
+class UrlEntry:
+    id: int
+    model_name: str
+    url_type: str
+    url: str
+
+
+class UnveilPageReportIndexView(ReportView):
     """
     Custom index view for the Page Report ViewSet.
     """
@@ -81,7 +89,6 @@ class UnveilPageReportIndexView(IndexView):
 
     def get_queryset(self):
         """Generate the queryset for page URLs."""
-        UrlEntry = namedtuple("UrlEntry", ["id", "model_name", "url_type", "url"])
         all_urls = []
         counter = 1
         max_instances = getattr(settings, "WAGTAIL_UNVEIL_MAX_INSTANCES", 1)
