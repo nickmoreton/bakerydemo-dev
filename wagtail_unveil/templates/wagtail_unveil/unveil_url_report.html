@@ -1,0 +1,214 @@
+{% extends 'wagtailadmin/reports/base_report.html' %}
+
+{% block extra_js %}
+    {{ block.super }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded and parsed');
+            var checkUrlsButton = document.querySelectorAll('[data-action="check-urls"]')[0];
+            var checkUrls = document.querySelectorAll('[data-check]');
+
+            // Hide the success and error SVGs on page load, only show the empty radio button
+            document.querySelectorAll('[data-result] .icon-circle-check, [data-result] .icon-error').forEach(svg => {
+                svg.style.display = 'none';
+            });
+
+            // Set the empty radio icon to mid-grey
+            document.querySelectorAll('[data-result] .icon-radio-empty').forEach(svg => {
+                svg.style.color = 'rgb(128, 128, 128)'; // Mid-grey color
+            });
+
+            if (!checkUrlsButton) {
+                return;
+            }
+
+            // Status element to show results
+            const statusElement = document.createElement('span');
+            statusElement.className = 'w-ml-3 w-text-14';
+            statusElement.id = 'check-urls-status';
+            statusElement.style.display = 'none';
+            checkUrlsButton.parentNode.appendChild(statusElement);
+
+            checkUrlsButton.addEventListener('click', function(event) {
+                event.preventDefault();
+
+                // Reset SVGs to their initial visibility state for a clean start at each check run
+                document.querySelectorAll('[data-result] .icon-circle-check, [data-result] .icon-error').forEach(svg => {
+                    svg.style.display = 'none';
+                });
+                document.querySelectorAll('[data-result] .icon-radio-empty').forEach(svg => {
+                    svg.style.display = 'inline-block';
+                    svg.style.color = 'rgb(128, 128, 128)'; // Mid-grey color
+                });
+
+                // Reset any previous data-result attributes and clear any error background colors
+                checkUrls.forEach(row => {
+                    row.setAttribute('data-result', '');
+                    row.style.backgroundColor = ''; // Clear any pink background
+                });
+
+                // Disable the button while checking but preserve the button's original HTML content
+                checkUrlsButton.setAttribute('disabled', 'disabled');
+
+                // Store the original inner HTML if not already stored
+                if (!checkUrlsButton.getAttribute('data-original-text')) {
+                    checkUrlsButton.setAttribute('data-original-text', checkUrlsButton.innerHTML);
+                }
+
+                // Update text when checking starts
+                const buttonIcon = checkUrlsButton.querySelector('svg') ? checkUrlsButton.querySelector('svg').outerHTML : '';
+                checkUrlsButton.innerHTML = buttonIcon + ' Checking URLs...';
+
+                let totalUrls = checkUrls.length;
+                let checkedUrls = 0;
+                let validUrls = 0;
+                let invalidUrls = 0;
+                let firstErrorRow = null; // Track the first error row so we can scroll to it later
+
+                // Initialize and show the status counter
+                updateStatusCounter();
+                statusElement.style.display = 'inline';
+
+                // Are there URLs to check
+                if (totalUrls === 0) {
+                    alert('No URLs found to check.');
+                    checkUrlsButton.removeAttribute('disabled');
+                    checkUrlsButton.innerHTML = checkUrlsButton.getAttribute('data-original-text');
+                    statusElement.style.display = 'none';
+                    return;
+                }
+
+                // Function to update the status counter
+                function updateStatusCounter() {
+                    statusElement.innerHTML = `
+                        <span style="color: rgb(27, 134, 102);">${validUrls} success</span> • 
+                        <span style="color: rgb(202, 59, 59);">${invalidUrls} error</span>
+                    `;
+                }
+
+                // Process each URL row
+                function processUrlWithDelay(index) {
+                    if (index >= checkUrls.length) {
+                        return; // All URLs processed
+                    }
+
+                    const row = checkUrls[index];
+                    const url = row.getAttribute('data-url');
+                    const rowId = row.getAttribute('data-id');
+
+                    // Scroll the row into view with smooth scrolling
+                    // Nicer when the page is very long as there is no pagination for large datasets
+                    row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    if (!url) {
+                        checkedUrls++;
+                        invalidUrls++;
+                        updateRowStatus(row, false, 'Missing URL');
+                        updateStatusCounter();
+                        checkIfCompleted();
+                        // Process next URL after delay
+                        setTimeout(() => processUrlWithDelay(index + 1), 100);
+                        return;
+                    }
+
+                    // Set row to checking state
+                    row.setAttribute('data-result', 'checking');
+
+                    // Get the data-result cell and update SVG visibility for checking state
+                    const resultCell = row.querySelector('[data-result]');
+                    if (resultCell) {
+                        resultCell.querySelectorAll('svg').forEach(svg => {
+                            svg.style.display = 'none';
+                        });
+                        resultCell.querySelector('.icon-radio-empty').style.display = 'inline-block';
+                    }
+
+                    // Fetch the URL and check the response status
+                    // Using HEAD request method to check if the URL is valid saves actually downloading the page content
+                    fetch(url, { method: 'HEAD' })
+                        .then(function(response) {
+                            checkedUrls++;
+                            if (response.ok) {
+                                validUrls++;
+                                updateRowStatus(row, true, 'Valid URL');
+                            } else {
+                                invalidUrls++;
+                                updateRowStatus(row, false, 'Invalid URL: ' + response.status);
+                                // Track first error row if not already set
+                                if (!firstErrorRow) {
+                                    firstErrorRow = row;
+                                }
+                            }
+                            updateStatusCounter();
+                            checkIfCompleted();
+                            // Process next URL after delay
+                            setTimeout(() => processUrlWithDelay(index + 1), 100);
+                        })
+                        .catch(function(error) {
+                            checkedUrls++;
+                            invalidUrls++;
+                            updateRowStatus(row, false, 'Error: ' + error.message);
+                            // Track first error row if not already set
+                            if (!firstErrorRow) {
+                                firstErrorRow = row;
+                            }
+                            updateStatusCounter(); // Update counters after each check
+                            checkIfCompleted();
+                            // Process next URL after delay
+                            setTimeout(() => processUrlWithDelay(index + 1), 100);
+                        });
+                }
+
+                // Start processing URLs without delay for the first fetch
+                processUrlWithDelay(0);
+
+                // Update the status in the row
+                function updateRowStatus(row, isValid, message) {
+                    const resultCell = row.querySelector('[data-result]');
+
+                    if (resultCell) {
+                        // Hide all SVG icons first
+                        resultCell.querySelectorAll('svg').forEach(svg => {
+                            svg.style.display = 'none';
+                        });
+
+                        // Show the appropriate SVG based on the result and set its color
+                        if (isValid) {
+                            const successIcon = resultCell.querySelector('.icon-circle-check');
+                            successIcon.style.display = 'inline-block';
+                            successIcon.style.color = 'rgb(27, 134, 102)'; // Darker green
+                            // Remove any error background color
+                            row.style.backgroundColor = '';
+                        } else {
+                            const errorIcon = resultCell.querySelector('.icon-error');
+                            errorIcon.style.display = 'inline-block';
+                            errorIcon.style.color = 'rgb(202, 59, 59)'; // Specified error color
+                            // Add light pink background to error rows
+                            row.style.backgroundColor = 'rgb(254, 240, 240)';
+                        }
+                    }
+
+                    // Update data-result attribute on the row
+                    row.setAttribute('data-result', isValid ? 'valid' : 'invalid');
+                }
+
+                // Check if all URLs have been verified
+                function checkIfCompleted() {
+                    if (checkedUrls >= totalUrls) {
+                        // All URLs have been checked
+                        checkUrlsButton.removeAttribute('disabled');
+                        // Restore the original button content including the icon
+                        checkUrlsButton.innerHTML = checkUrlsButton.getAttribute('data-original-text');
+
+                        // If there were any errors, scroll to the first error
+                        if (invalidUrls > 0 && firstErrorRow) {
+                            setTimeout(() => {
+                                firstErrorRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }, 100); // Small delay to ensure UI updates are complete
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
