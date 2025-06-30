@@ -58,5 +58,4 @@ class UnveilReportViewSet(ViewSet):
         return [
             path("", self.index_view_class.as_view(), name="index"),
             path("results/", self.index_view_class.as_view(), name="results"),
-            path("json/", self.as_json_view, name="json"),
         ]
