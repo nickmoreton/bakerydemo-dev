@@ -77,6 +77,7 @@ class UnveilSettingsReportIndexView(UnveilReportView):
     """
     Custom index view for the Settings Report ViewSet.
     """
+    api_slug = "settings"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Settings"

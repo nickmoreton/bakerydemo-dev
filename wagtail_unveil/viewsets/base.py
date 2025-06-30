@@ -10,15 +10,9 @@ class UnveilReportView(ReportView):
     """Base view class for Unveil reports"""
     
     def get_header_buttons(self):
-        """Get header buttons for the report"""
-        # Try to infer the report type from the class name
-        class_name = self.__class__.__name__
-        # e.g. UnveilPageReportIndexView -> page
-        if class_name.startswith("Unveil") and class_name.endswith("ReportIndexView"):
-            report_type = class_name[len("Unveil"): -len("ReportIndexView")].lower()
-        else:
-            report_type = "collection"
-        api_url = f"/unveil/api/{report_type}/"
+        """Get header buttons for the report, using the explicit api_slug attribute."""
+        api_slug = getattr(self, "api_slug", "collection")
+        api_url = f"/unveil/api/{api_slug}/"
         return [
             HeaderButton(
                 label="Json View",

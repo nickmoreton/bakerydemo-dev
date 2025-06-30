@@ -73,6 +73,7 @@ def get_snippet_urls(base_url, max_instances):
 
 class UnveilSnippetReportIndexView(UnveilReportView):
     # Index view for the Snippet Report
+    api_slug = "snippet"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Snippet"

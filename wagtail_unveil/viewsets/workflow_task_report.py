@@ -52,6 +52,7 @@ def get_workflow_task_urls(base_url, max_instances):
 
 class UnveilWorkflowTaskReportIndexView(UnveilReportView):
     # Index view for the Workflow Task Report
+    api_slug = "workflow-task"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Workflow Task"

@@ -46,6 +46,7 @@ def get_redirect_urls(base_url, max_instances):
 
 class UnveilRedirectReportIndexView(UnveilReportView):
     # Index view for the Redirect Report
+    api_slug = "redirect"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Redirect"

@@ -46,32 +46,23 @@ def get_collection_urls(base_url, max_instances):
 
 class UnveilCollectionReportIndexView(UnveilReportView):
     # Index view for the Collection Report
+    api_slug = "collection"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Collection"
     header_icon = "folder-open-1"
     paginate_by = None
-    
+
     def get_queryset(self):
         # Get the queryset for collection URLs
-        
-        # Collect URLs from different helpers
         all_urls = []
-        
-        # We'll use a counter for IDs
         counter = 1
-        
-        # Get URLs from different sources using helper functions
-        # Get max_instances from settings with a default of 20 (collections are typically moderate in number)
         max_instances = getattr(settings, 'WAGTAIL_UNVEIL_MAX_INSTANCES', 1)
         base_url = getattr(settings, "WAGTAIL_UNVEIL_BASE_URL", "http://localhost:8000")
-        
-        # Collect collection URLs
         collection_urls = get_collection_urls(base_url, max_instances)
         for model_name, url_type, url in collection_urls:
             all_urls.append(UrlEntry(counter, model_name, url_type, url))
             counter += 1
-            
         return all_urls
  
 

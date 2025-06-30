@@ -57,6 +57,7 @@ def get_workflow_urls(base_url, max_instances):
 
 class UnveilWorkflowReportIndexView(UnveilReportView):
     # Index view for the Workflow Report
+    api_slug = "workflow"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Workflow"

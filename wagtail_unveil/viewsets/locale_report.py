@@ -43,6 +43,7 @@ def get_locale_urls(base_url, max_instances):
 
 class UnveilLocaleReportIndexView(UnveilReportView):
     # Index view for the Locale Report
+    api_slug = "locale"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Locale "

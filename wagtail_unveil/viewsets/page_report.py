@@ -72,6 +72,7 @@ class UnveilPageReportIndexView(UnveilReportView):
     """
     Custom index view for the Page Report ViewSet.
     """
+    api_slug = "page"
     template_name = "wagtail_unveil/unveil_url_report.html"
     results_template_name = "wagtail_unveil/unveil_url_report_results.html"
     page_title = "Unveil Page"
