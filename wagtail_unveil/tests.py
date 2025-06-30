@@ -140,37 +140,34 @@ class UnveilReportsJSONAPITest(TestCase):
         self.client.login(username="admin", password="password123")
 
     def test_json_endpoint_without_token(self):
-        """Test that JSON endpoints require authentication token"""
-        url = reverse("unveil_collection_report:json")
+        """Test that JSON API endpoints require authentication token"""
+        url = "/unveil/api/collection/"
         response = self.client.get(url)
-        # Accept either 403 (Forbidden) or 200 (if superuser bypass is enabled)
         self.assertIn(response.status_code, [200, 403])
         if response.status_code == 403:
-            self.assertContains(response, "Invalid or missing token", status_code=403)
+            self.assertIn("Invalid or missing token", response.content.decode())
         else:
-            # If 200, check for valid JSON structure
             self.assertEqual(response['Content-Type'], 'application/json')
             json_data = response.json()
             self.assertIn('results', json_data)
             self.assertIsInstance(json_data['results'], list)
 
     def test_json_endpoint_with_invalid_token(self):
-        """Test that JSON endpoints reject invalid tokens"""
-        url = reverse("unveil_collection_report:json")
+        """Test that JSON API endpoints reject invalid tokens"""
+        url = "/unveil/api/collection/"
         response = self.client.get(url, {'token': 'invalid_token'})
         self.assertIn(response.status_code, [200, 403])
         if response.status_code == 403:
-            self.assertContains(response, "Invalid or missing token", status_code=403)
+            self.assertIn("Invalid or missing token", response.content.decode())
         else:
-            # If 200, check for valid JSON structure (should only happen for superuser)
             self.assertEqual(response['Content-Type'], 'application/json')
             json_data = response.json()
             self.assertIn('results', json_data)
             self.assertIsInstance(json_data['results'], list)
 
     def test_json_endpoint_with_query_param_token(self):
-        """Test JSON endpoint with valid token as query parameter"""
-        url = reverse("unveil_collection_report:json")
+        """Test JSON API endpoint with valid token as query parameter"""
+        url = "/unveil/api/collection/"
         response = self.client.get(url, {'token': 'test_token_123'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -179,8 +176,8 @@ class UnveilReportsJSONAPITest(TestCase):
         self.assertIsInstance(json_data['results'], list)
 
     def test_json_endpoint_with_header_token(self):
-        """Test JSON endpoint with valid token in header"""
-        url = reverse("unveil_collection_report:json")
+        """Test JSON API endpoint with valid token in header"""
+        url = "/unveil/api/collection/"
         response = self.client.get(url, HTTP_X_API_TOKEN='test_token_123')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/json')
@@ -188,48 +185,44 @@ class UnveilReportsJSONAPITest(TestCase):
         self.assertIn('results', json_data)
         self.assertIsInstance(json_data['results'], list)
 
-    def test_all_reports_have_json_endpoints(self):
-        """Test that all reports have working JSON endpoints"""
-        report_namespaces = [
-            'unveil_collection_report',
-            'unveil_document_report',
-            'unveil_form_report',
-            'unveil_generic_report',
-            'unveil_image_report',
-            'unveil_locale_report',
-            'unveil_page_report',
-            'unveil_redirect_report',
-            'unveil_search_promotion_report',
-            'unveil_settings_report',
-            'unveil_site_report',
-            'unveil_snippet_report',
-            'unveil_user_report',
-            'unveil_admin_report',
-            'unveil_workflow_report',
-            'unveil_workflow_task_report',
-        ]
-        
-        for namespace in report_namespaces:
-            with self.subTest(report=namespace):
-                url = reverse(f"{namespace}:json")
+    def test_all_reports_have_json_api_endpoints(self):
+        """Test that all reports have working JSON API endpoints"""
+        api_slugs = [
+            'collection',
+            'document',
+            'form',
+            'generic',
+            'image',
+            'locale',
+            'page',
+            'redirect',
+            'search-promotion',
+            'settings',
+            'site',
+            'snippet',
+            'user',
+            'admin',
+            'workflow',
+            'workflow-task',
+        ] # Update this list if adding new reports
+        for slug in api_slugs:
+            with self.subTest(report=slug):
+                url = f"/unveil/api/{slug}/"
                 response = self.client.get(url, {'token': 'test_token_123'})
-                self.assertEqual(response.status_code, 200, 
-                               f"JSON endpoint for {namespace} failed")
+                self.assertEqual(response.status_code, 200, f"JSON API endpoint for {slug} failed")
                 self.assertEqual(response['Content-Type'], 'application/json')
                 json_data = response.json()
                 self.assertIn('results', json_data)
                 self.assertIsInstance(json_data['results'], list)
 
     def test_json_response_structure(self):
-        """Test that JSON responses have the correct structure"""
-        url = reverse("unveil_admin_report:json")  # Admin report has predictable data
+        """Test that JSON API responses have the correct structure"""
+        url = "/unveil/api/admin/"  # Admin report has predictable data
         response = self.client.get(url, {'token': 'test_token_123'})
         self.assertEqual(response.status_code, 200)
-        
         json_data = response.json()
         self.assertIn('results', json_data)
-        
-        if json_data['results']:  # If there are results
+        if json_data['results']:
             entry = json_data['results'][0]
             required_fields = ['id', 'model_name', 'url_type', 'url']
             for field in required_fields:
