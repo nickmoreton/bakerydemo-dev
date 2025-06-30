@@ -38,13 +38,15 @@ def get_site_urls(base_url, max_instances):
             except NoReverseMatch:
                 pass
             # Frontend URL (actual site URL)
-            protocol = "https" if site.port == 443 else "http"
-            if site.port in [80, 443]:
-                frontend_url = f"{protocol}://{site.hostname}/"
-            else:
-                frontend_url = f"{protocol}://{site.hostname}:{site.port}/"
-            if frontend_url:
-                urls.append((site_model_name, 'frontend', frontend_url))
+            # Left here but commented out because it may not be needed
+            # this should be handled by the Page Report
+            # protocol = "https" if site.port == 443 else "http"
+            # if site.port in [80, 443]:
+            #     frontend_url = f"{protocol}://{site.hostname}/"
+            # else:
+            #     frontend_url = f"{protocol}://{site.hostname}:{site.port}/"
+            # if frontend_url:
+            #     urls.append((site_model_name, 'frontend', frontend_url))
     except Site.DoesNotExist:
         pass
     except (AttributeError, ValueError, TypeError):

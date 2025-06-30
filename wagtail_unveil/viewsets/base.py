@@ -13,10 +13,16 @@ class UnveilReportView(ReportView):
         """Get header buttons for the report"""
         return [
             HeaderButton(
+                label="Json View",
+                icon_name="code",
+                url=self.request.path.rstrip('/') + '/json/',
+                attrs={"target": "_blank"},
+            ),
+            HeaderButton(
                 label="Run Checks",
                 icon_name="link",
                 attrs={"data-action": "check-urls"},
-            )
+            ),
         ]
 
 
@@ -24,13 +30,13 @@ class UnveilReportViewSet(ViewSet):
     """Base ViewSet class for Unveil reports with JSON API support"""
 
     def as_json_view(self, request):
-        """Return the report data as JSON with token authentication"""
-        # Require a token in the query string or header
+        """Return the report data as JSON with token authentication, unless user is superuser."""
         required_token = getattr(settings, 'WAGTAIL_UNVEIL_JSON_TOKEN', None)
         token = request.GET.get('token') or request.headers.get('X-API-TOKEN')
-        if not required_token or token != required_token:
-            return HttpResponseForbidden("Invalid or missing token.")
-        
+        # Bypass token check if user is authenticated and is superuser
+        if not (hasattr(request, 'user') and request.user.is_authenticated and request.user.is_superuser):
+            if not required_token or token != required_token:
+                return HttpResponseForbidden("Invalid or missing token.")
         # Return the report data as JSON
         view = self.index_view_class()
         queryset = view.get_queryset()
