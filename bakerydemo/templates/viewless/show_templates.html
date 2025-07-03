@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Templates in Project</h1>
+  {% if error %}
+    <div style="color: red;">{{ error }}</div>
+  {% else %}
+    <p><strong>Project root:</strong> {{ project_root }}</p>
+    <form method="get">
+      <label>
+        <input type="checkbox" name="absolute" value="1" {% if show_absolute %}checked{% endif %} onchange="this.form.submit()">
+        Show absolute paths
+      </label>
+    </form>
+    {% if template_paths %}
+      <ul>
+        {% for path in template_paths %}
+          <li><code>{{ path }}</code></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No templates found in the project.</p>
+    {% endif %}
+  {% endif %}
+{% endblock %}
