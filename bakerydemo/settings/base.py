@@ -77,6 +77,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sitemaps",
+    "viewless",
 ]
 
 MIDDLEWARE = [
@@ -253,3 +254,8 @@ if "CSP_DEFAULT_SRC" in os.environ:
         CSP_FRAME_SRC = os.environ.get("CSP_FRAME_SRC").split(",")
     if "CSP_REPORT_URI" in os.environ:
         CSP_REPORT_URI = os.environ.get("CSP_REPORT_URI")
+
+VIEWLESS_CONFIG = {
+    "PROJECT_ROOT": PROJECT_DIR,
+    "BASE_DIR": BASE_DIR,
+}
