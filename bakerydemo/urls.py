@@ -25,6 +25,7 @@ urlpatterns = [
     path("sitemap.xml", sitemap),
     path("api/v2/", api_router.urls),
     path("__debug__/", include(debug_toolbar.urls)),
+    path("unveil/", include("wagtail_unveil.urls")),
 ]
 
 
